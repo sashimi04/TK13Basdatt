@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .login-container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="email"],
+        input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .error-message {
+            color: #d9534f;
+            margin-top: 5px;
+            font-size: 14px;
+            display: none;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .register-link a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Login</h1>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" required placeholder="Masukkan email Anda">
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required placeholder="Masukkan password Anda">
+                <div id="errorMessage" class="error-message">Email atau password salah. Silakan coba lagi.</div>
+            </div>
+            
+            <button type="submit">LOGIN</button>
+        </form>
+        
+        <div class="register-link">
+            Belum punya akun? <a href="register_type.html">Daftar disini</a>
+        </div>
+    </div>
+
+    <script>
+        // This would be replaced with actual validation logic in a real implementation
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Simulate error for demonstration
+            // In a real app, this would be server-side validation
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            if(email === '' || password === '') {
+                document.getElementById('errorMessage').style.display = 'block';
+                document.getElementById('errorMessage').textContent = 'Email dan password harus diisi';
+            } else {
+                // For demo purposes, we'll assume login is successful
+                // In real app, this would redirect to dashboard after successful validation
+                document.getElementById('errorMessage').style.display = 'none';
+                alert('Login berhasil! Akan diarahkan ke dashboard.');
+                // window.location.href = 'dashboard.html';
+            }
+        });
+    </script>
+</body>
+</html>

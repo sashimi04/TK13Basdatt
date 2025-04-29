@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - List Hewan Peliharaan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .add-pet {
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-edit {
+            background-color: #2196F3;
+        }
+        .btn-edit:hover {
+            background-color: #0b7dda;
+        }
+        .btn-delete {
+            background-color: #f44336;
+        }
+        .btn-delete:hover {
+            background-color: #da190b;
+        }
+        .pet-photo {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        .photo-placeholder {
+            width: 50px;
+            height: 50px;
+            background-color: #eee;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 12px;
+        }
+        .footer-note {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>List Hewan Peliharaan</h1>
+        
+        <div class="add-pet">
+            <a href="pet_create.html" class="btn">Create New Pet</a>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Pemilik</th>
+                    <th>Jenis Hewan</th>
+                    <th>Nama Hewan</th>
+                    <th>Tanggal Lahir</th>
+                    <th>Foto</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>John Doe</td>
+                    <td>Kucing</td>
+                    <td>Snowy</td>
+                    <td>9 Februari 2020</td>
+                    <td><div class="photo-placeholder">No photo</div></td>
+                    <td class="action-btns">
+                        <a href="pet_edit.html?id=1" class="btn btn-edit">Update</a>
+                        <a href="pet_delete.html?id=1" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>PT Abu Sayang Hewan</td>
+                    <td>Anjing</td>
+                    <td>Blacky</td>
+                    <td>15 November 2019</td>
+                    <td><div class="photo-placeholder">No photo</div></td>
+                    <td class="action-btns">
+                        <a href="pet_edit.html?id=2" class="btn btn-edit">Update</a>
+                        <a href="pet_delete.html?id=2" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>PT Pechita Kucing</td>
+                    <td>Hamster</td>
+                    <td>

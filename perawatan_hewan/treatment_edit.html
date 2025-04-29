@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - Edit Treatment</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        .static-value {
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+        }
+        select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-save {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-save:hover {
+            background-color: #45a049;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Update Treatment</h1>
+        
+        <form id="editForm">
+            <div class="form-group">
+                <label>Kunjungan</label>
+                <div class="static-value">KJN001</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="treatment-type">Jenis Perawatan</label>
+                <select id="treatment-type" required>
+                    <option value="TRM001" selected>TRM001 - Dental Care</option>
+                    <option value="TRM002">TRM002 - Parasite Control</option>
+                    <option value="TRM003">TRM003 - Flea Treatment</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="notes">Catatan Medis</label>
+                <textarea id="notes">Hewan nya dijaga terus ya!</textarea>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="window.location.href='treatment_list.html'">Cancel</button>
+                <button type="submit" class="btn btn-save">Save Changes</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // Simulate save action
+            alert('Perubahan berhasil disimpan!');
+            window.location.href = 'treatment_list.html';
+        });
+    </script>
+</body>
+</html>

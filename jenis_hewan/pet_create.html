@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - Create New Pet</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        select, input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="date"] {
+            padding: 9px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-submit:hover {
+            background-color: #45a049;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create New Pet</h1>
+        
+        <form id="createPetForm">
+            <div class="form-group">
+                <label for="owner">Pemilik</label>
+                <select id="owner" required>
+                    <option value="">Pilih pemilik</option>
+                    <option value="1">John Doe</option>
+                    <option value="2">PT Pechita Kucing</option>
+                    <option value="3">PT Abu Sayang Hewan</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pet-type">Jenis Hewan</label>
+                <select id="pet-type" required>
+                    <option value="">Pilih jenis hewan</option>
+                    <option value="1">Kucing</option>
+                    <option value="2">Anjing</option>
+                    <option value="3">Hamster</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pet-name">Nama Hewan Peliharaan</label>
+                <input type="text" id="pet-name" required placeholder="Nama Hewan">
+            </div>
+            
+            <div class="form-group">
+                <label for="birth-date">Tanggal Lahir Hewan</label>
+                <input type="date" id="birth-date" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="photo-url">URL Foto Hewan</label>
+                <input type="url" id="photo-url" placeholder="https://example.com">
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="window.location.href='pet_list.html'">Cancel</button>
+                <button type="submit" class="btn btn-submit">Create</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('createPetForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Hewan peliharaan berhasil dibuat!');
+            window.location.href = 'pet_list.html';
+        });
+    </script>
+</body>
+</html>

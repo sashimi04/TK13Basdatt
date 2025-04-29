@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .navbar {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .navbar-brand {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        .logout-btn {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .logout-btn:hover {
+            background-color: #c9302c;
+        }
+        .dashboard-container {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .welcome-message {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .profile-section {
+            margin-bottom: 30px;
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #ddd;
+            margin-right: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+            color: #666;
+        }
+        .profile-info h2 {
+            margin: 0;
+            color: #333;
+        }
+        .profile-info p {
+            margin: 5px 0 0;
+            color: #666;
+        }
+        .profile-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .detail-card {
+            background-color: #f9f9f9;
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .detail-card h3 {
+            margin-top: 0;
+            color: #4CAF50;
+            font-size: 16px;
+        }
+        .detail-card p {
+            margin-bottom: 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">Pet Clinic - Dashboard</div>
+        <button class="logout-btn" id="logoutBtn">Logout</button>
+    </nav>
+    
+    <div class="dashboard-container">
+        <div class="welcome-message">Selamat datang di Dashboard Pet Clinic</div>
+        
+        <div class="profile-section">
+            <div class="profile-header">
+                <div class="profile-avatar">JD</div>
+                <div class="profile-info">
+                    <h2>John Doe</h2>
+                    <p>Dokter Hewan</p>
+                </div>
+            </div>
+            
+            <div class="profile-details">
+                <div class="detail-card">
+                    <h3>Email</h3>
+                    <p>john.doe@example.com</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Nomor Telepon</h3>
+                    <p>081234567890</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Alamat</h3>
+                    <p>Jl. Contoh No. 123, Kota Contoh</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Tanggal Bergabung</h3>
+                    <p>15 Januari 2023</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Nomor Izin Praktik</h3>
+                    <p>DHP-123456789</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Spesialisasi</h3>
+                    <p>Hewan Peliharaan Kecil</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            // In a real app, this would also clear the session on the server
+            if(confirm('Apakah Anda yakin ingin logout?')) {
+                // Redirect to login page
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

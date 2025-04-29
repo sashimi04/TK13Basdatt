@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekam Medis - Pet Clinic</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        .medical-record {
+            margin-bottom: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            width: 30%;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+        .btn-primary {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-primary:hover {
+            background-color: #45a049;
+        }
+        .btn-secondary {
+            background-color: #757575;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background-color: #616161;
+        }
+        .btn-success {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-success:hover {
+            background-color: #0b7dda;
+        }
+        .visit-info {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .visit-info p {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Visit Information -->
+        <div class="visit-info">
+            <h2>Informasi Kunjungan</h2>
+            <p><strong>ID Kunjungan:</strong> KJN20240001</p>
+            <p><strong>Klien:</strong> Nurul Fadilah</p>
+            <p><strong>Hewan:</strong> Milo</p>
+            <p><strong>Dokter:</strong> dr. Ibnu</p>
+            <p><strong>Tanggal:</strong> 10 Januari 2024, 09:00 - 10:15</p>
+        </div>
+
+        <!-- Warning when no medical record exists -->
+        <div id="noRecordWarning" class="warning">
+            <h3>Rekam Medis tidak Tersedia</h3>
+            <p>Maaf, sepertinya belum ada rekam medis yang dibuat untuk kunjungan ini.</p>
+            <div class="form-actions">
+                <button id="createBtn" class="btn btn-primary" style="display: none;">Create</button>
+                <a href="visit_list.html" class="btn btn-secondary">OK</a>
+            </div>
+        </div>
+
+        <!-- Medical Record Display -->
+        <div id="medicalRecord" class="medical-record" style="display: none;">
+            <h1>Rekam Medis</h1>
+            <table>
+                <tr>
+                    <th>Suhu Tubuh</th>
+                    <td id="temperatureDisplay">36.8°C</td>
+                </tr>
+                <tr>
+                    <th>Berat Badan</th>
+                    <td id="weightDisplay">12.3 kg</td>
+                </tr>
+                <tr>
+                    <th>Catatan Medis</th>
+                    <td id="notesDisplay">Hewan dalam kondisi sehat, diberikan vaksin rabies dosis standar, tidak ada reaksi alergi setelah penyuntikan.</td>
+                </tr>
+            </table>
+            <div class="form-actions">
+                <button id="updateBtn" class="btn btn-success" style="display: none;">Update</button>
+                <a href="visit_list.html" class="btn btn-secondary">Kembali</a>
+            </div>
+        </div>
+
+        <!-- Create Medical Record Form -->
+        <div id="createForm" style="display: none;">
+            <h1>Create Rekam Medis</h1>
+            <form id="createMedicalRecordForm">
+                <div class="form-group">
+                    <label for="temperature">Suhu Tubuh Pasien (°C)</label>
+                    <input type="number" step="0.1" id="temperature" name="temperature" required>
+                </div>
+                <div class="form-group">
+                    <label for="weight">Berat Badan Pasien (kg)</label>
+                    <input type="number" step="0.1" id="weight" name="weight" required>
+                </div>
+                <div class="form-group">
+                    <label for="notes">Catatan Medis</label>
+                    <textarea id="notes" name="notes" required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelCreateBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Create</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Update Medical Record Form -->
+        <div id="updateForm" style="display: none;">
+            <h1>Update Rekam Medis</h1>
+            <form id="updateMedicalRecordForm">
+                <div class="form-group">
+                    <label for="updateTemperature">Suhu Tubuh</label>
+                    <input type="number" step="0.1" id="updateTemperature" name="updateTemperature" value="36.8" required>
+                </div>
+                <div class="form-group">
+                    <label for="updateWeight">Berat Badan</label>
+                    <input type="number" step="0.1" id="updateWeight" name="updateWeight" value="12.3" required>
+                </div>
+                <div class="form-group">
+                    <label for="updateNotes">Catatan</label>
+                    <textarea id="updateNotes" name="updateNotes" required>Hewan dalam kondisi sehat, diberikan vaksin rabies dosis standar, tidak ada reaksi alergi setelah penyuntikan.</textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="button" id="cancelUpdateBtn" class="btn btn-secondary">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Get visit ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const visitId = urlParams.get('id');
+        
+        // Simulate user role (change to 'doctor' to see create/update buttons)
+        // In real app, this would come from authentication system
+        const userRole = 'doctor'; // Can be 'doctor', 'nurse', 'frontdesk', 'client'
+        
+        // Check if medical record exists (simulate different cases)
+        // In real app, this would come from API call
+        const hasMedicalRecord = visitId === 'KJN20240001'; // Only show record for first visit
+        
+        // DOM Elements
+        const noRecordWarning = document.getElementById('noRecordWarning');
+        const medicalRecord = document.getElementById('medicalRecord');
+        const createForm = document.getElementById('createForm');
+        const updateForm = document.getElementById('updateForm');
+        const createBtn = document.getElementById('createBtn');
+        const updateBtn = document.getElementById('updateBtn');
+        
+        // Initialize UI based on conditions
+        if (hasMedicalRecord) {
+            noRecordWarning.style.display = 'none';
+            medicalRecord.style.display = 'block';
+            
+            if (userRole === 'doctor') {
+                updateBtn.style.display = 'inline-block';
+            }
+        } else {
+            if (userRole === 'doctor') {
+                createBtn.style.display = 'inline-block';
+            }
+        }
+        
+        // Button event handlers
+        if (createBtn) {
+            createBtn.addEventListener('click', function() {
+                noRecordWarning.style.display = 'none';
+                createForm.style.display = 'block';
+            });
+        }
+        
+        if (updateBtn) {
+            updateBtn.addEventListener('click', function() {
+                medicalRecord.style.display = 'none';
+                updateForm.style.display = 'block';
+            });
+        }
+        
+        document.getElementById('cancelCreateBtn')?.addEventListener('click', function() {
+            createForm.style.display = 'none';
+            noRecordWarning.style.display = 'block';
+        });
+        
+        document.getElementById('createMedicalRecordForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const temp = document.getElementById('temperature').value;
+            const weight = document.getElementById('weight').value;
+            const notes = document.getElementById('notes').value;
+            
+            // Update the display
+            document.getElementById('temperatureDisplay').textContent = temp + '°C';
+            document.getElementById('weightDisplay').textContent = weight + ' kg';
+            document.getElementById('notesDisplay').textContent = notes;
+            
+            // Show the medical record
+            createForm.style.display = 'none';
+            medicalRecord.style.display = 'block';
+            
+            if (userRole === 'doctor') {
+                updateBtn.style.display = 'inline-block';
+            }
+            
+            // In real app, would submit to server here
+            alert('Rekam medis berhasil dibuat!');
+        });
+        
+        document.getElementById('cancelUpdateBtn')?.addEventListener('click', function() {
+            updateForm.style.display = 'none';
+            medicalRecord.style.display = 'block';
+        });
+        
+        document.getElementById('updateMedicalRecordForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const temp = document.getElementById('updateTemperature').value;
+            const weight = document.getElementById('updateWeight').value;
+            const notes = document.getElementById('updateNotes').value;
+            
+            // Update the display
+            document.getElementById('temperatureDisplay').textContent = temp + '°C';
+            document.getElementById('weightDisplay').textContent = weight + ' kg';
+            document.getElementById('notesDisplay').textContent = notes;
+            
+            // Show the medical record
+            updateForm.style.display = 'none';
+            medicalRecord.style.display = 'block';
+            
+            // In real app, would submit to server here
+            alert('Rekam medis berhasil diperbarui!');
+        });
+    </script>
+</body>
+</html>

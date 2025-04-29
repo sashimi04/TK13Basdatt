@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - List Kunjungan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .add-visit {
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-view {
+            background-color: #2196F3;
+        }
+        .btn-view:hover {
+            background-color: #0b7dda;
+        }
+        .btn-edit {
+            background-color: #FFC107;
+            color: #333;
+        }
+        .btn-edit:hover {
+            background-color: #e0a800;
+        }
+        .btn-delete {
+            background-color: #f44336;
+        }
+        .btn-delete:hover {
+            background-color: #da190b;
+        }
+        .no-record {
+            color: #666;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>List Kunjungan</h1>
+        
+        <div class="add-visit">
+            <a href="visit_create.html" class="btn">Create Kunjungan</a>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>ID Kunjungan</th>
+                    <th>Klien</th>
+                    <th>Nama Hewan</th>
+                    <th>Metode Kunjungan</th>
+                    <th>Waktu Mulai</th>
+                    <th>Waktu Selesai</th>
+                    <th>Rekam Medis</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>KJN20240001</td>
+                    <td>Nurul Fadilah</td>
+                    <td>Milo</td>
+                    <td>Kontrol</td>
+                    <td>2024-01-10 09:00</td>
+                    <td>2024-01-10 10:15</td>
+                    <td><a href="medical_record_view.html?id=KJN20240001" class="btn btn-view">View</a></td>
+                    <td class="action-btns">
+                        <a href="visit_edit.html?id=KJN20240001" class="btn btn-edit">Edit</a>
+                        <a href="visit_delete.html?id=KJN20240001" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>KJN20240002</td>
+                    <td>Reza Maulana Kurniawan</td>
+                    <td>Luna</td>
+                    <td>Darurat</td>
+                    <td>2024-01-12 14:30</td>
+                    <td>2024-01-12 16:45</td>
+                    <td><a href="medical_record_view.html?id=KJN20240002" class="btn btn-view">View</a></td>
+                    <td class="action-btns">
+                        <a href="visit_edit.html?id=KJN20240002" class="btn btn-edit">Edit</a>
+                        <a href="visit_delete.html?id=KJN20240002" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>KJN20240003</td>
+                    <td>Vina Maharani</td>
+                    <td>Max</td>
+                    <td>Rutin</td>
+                    <td>2024-01-15 10:00</td>
+                    <td>2024-01-15 11:30</td>
+                    <td><a href="medical_record_view.html?id=KJN20240003" class="btn btn-view">View</a></td>
+                    <td class="action-btns">
+                        <a href="visit_edit.html?id=KJN20240003" class="btn btn-edit">Edit</a>
+                        <a href="visit_delete.html?id=KJN20240003" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>4</td>
+                    <td>KJN20240004</td>
+                    <td>Ilham Pratama</td>
+                    <td>Bella</td>
+                    <td>Kontrol</td>
+                    <td>2024-01-18 13:00</td>
+                    <td>2024-01-18 14:15</td>
+                    <td><a href="medical_record_view.html?id=KJN20240004" class="btn btn-view">View</a></td>
+                    <td class="action-btns">
+                        <a href="visit_edit.html?id=KJN20240004" class="btn btn-edit">Edit</a>
+                        <a href="visit_delete.html?id=KJN20240004" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>5</td>
+                    <td>KJN20240005</td>
+                    <td>Dita Ayu Ningtyas</td>
+                    <td>Charlie</td>
+                    <td>Darurat</td>
+                    <td>2024-01-20 08:30</td>
+                    <td>2024-01-20 10:45</td>
+                    <td><a href="medical_record_view.html?id=KJN20240005" class="btn btn-view">View</a></td>
+                    <td class="action-btns">
+                        <a href="visit_edit.html?id=KJN20240005" class="btn btn-edit">Edit</a>
+                        <a href="visit_delete.html?id=KJN20240005" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mx-auto p-6">
+  <h1 class="text-2xl font-bold mb-4">List Hewan Peliharaan</h1>
+
+  {# CREATE: Front-Desk Officer & Klien #}
+  {% if user_data.user_type in ['FrontDeskOfficer','Klien'] %}
+    <a href="{% url 'animals:hewan_create' %}"
+       class="bg-gray-900 text-white px-4 py-2 rounded mb-4 inline-block hover:bg-gray-800">
+      + Create New Pet
+    </a>
+  {% endif %}
+
+  <div class="overflow-x-auto bg-white border border-gray-200 rounded">
+    <table class="min-w-full">
+      <thead class="bg-gray-100">
+        <tr>
+          <th class="px-4 py-2 text-left">No</th>
+          <th class="px-4 py-2 text-left">Pemilik</th>
+          <th class="px-4 py-2 text-left">Jenis Hewan</th>
+          <th class="px-4 py-2 text-left">Nama Hewan</th>
+          <th class="px-4 py-2 text-left">Tanggal Lahir</th>
+          <th class="px-4 py-2 text-left">Foto</th>
+          <th class="px-4 py-2 text-left">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pet in hewan_list %}
+          <tr class="border-t">
+            <td class="px-4 py-2">{{ forloop.counter }}</td>
+            <td class="px-4 py-2">
+              {{ pet.pemilik.get_full_name }}
+            </td>
+            <td class="px-4 py-2">{{ pet.jenis_hewan.nama_jenis }}</td>
+            <td class="px-4 py-2">{{ pet.nama }}</td>
+            <td class="px-4 py-2">{{ pet.tanggal_lahir|date:"d F Y" }}</td>
+            <td class="px-4 py-2">
+              <img src="{{ pet.url_foto }}" alt="Foto {{ pet.nama }}"
+                   class="w-16 h-16 object-cover rounded" />
+            </td>
+            <td class="px-4 py-2 space-x-2">
+              {# UPDATE: kedua role #}
+              {% if user_data.user_type in ['FrontDeskOfficer','Klien'] %}
+                <a href="{% url 'animals:hewan_update' pet.id %}"
+                   class="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-500">
+                  Update
+                </a>
+              {% endif %}
+
+              {# DELETE: hanya Front-Desk Officer & hanya jika tak ada kunjungan aktif #}
+              {% if user_data.user_type == 'FrontDeskOfficer' and pet.active_visits == 0 %}
+                <a href="{% url 'animals:hewan_delete' pet.id %}"
+                   class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-400">
+                  Delete
+                </a>
+              {% endif %}
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="7" class="px-4 py-4 text-center text-gray-500">
+              Belum ada hewan peliharaan.
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

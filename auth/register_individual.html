@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - Register Individual Client</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        .required::after {
+            content: " *";
+            color: red;
+        }
+        button {
+            background-color: #111729;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .note {
+            font-style: italic;
+            color: #666;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <h1>FORM REGISTER</h1>
+    <h2>Klien - Individu</h2>
+    
+    <form>
+        <div class="form-group">
+            <label for="email" class="required">Email</label>
+            <input type="email" id="email" placeholder="Email">
+        </div>
+        
+        <div class="form-group">
+            <label for="first-name" class="required">Nama Depan</label>
+            <input type="text" id="first-name" placeholder="Nama Depan">
+        </div>
+        
+        <div class="form-group">
+            <label for="middle-name">Nama Tengah</label>
+            <input type="text" id="middle-name" placeholder="Nama Tengah">
+        </div>
+        
+        <div class="form-group">
+            <label for="last-name" class="required">Nama Belakang</label>
+            <input type="text" id="last-name" placeholder="Nama Belakang">
+        </div>
+        
+        <div class="form-group">
+            <label for="password" class="required">Password</label>
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        
+        <div class="form-group">
+            <label for="phone" class="required">Nomor Telepon</label>
+            <input type="tel" id="phone" placeholder="Nomor Telepon">
+        </div>
+        
+        <div class="form-group">
+            <label for="address" class="required">Alamat</label>
+            <textarea id="address" rows="3" placeholder="Alamat"></textarea>
+        </div>
+        
+        <button type="submit">Register</button>
+    </form>
+    
+    <div class="note">
+        <p>○ Seluruh field wajib diisi, kecuali nama tengah.</p>
+        <p>○ Atribut tanggal_registrasi akan otomatis disimpan sebagai tanggal hari ini (tanggal pembuatan akun).</p>
+    </div>
+</body>
+</html>

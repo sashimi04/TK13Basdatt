@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - List Treatments</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .add-treatment {
+            margin-bottom: 20px;
+        }
+        .btn {
+            padding: 8px 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover {
+            background-color: #45a049;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        tr:hover {
+            background-color: #f9f9f9;
+        }
+        .action-btns {
+            display: flex;
+            gap: 5px;
+        }
+        .btn-edit {
+            background-color: #2196F3;
+        }
+        .btn-edit:hover {
+            background-color: #0b7dda;
+        }
+        .btn-delete {
+            background-color: #f44336;
+        }
+        .btn-delete:hover {
+            background-color: #da190b;
+        }
+        .doctor-email::before {
+            content: "dr. ";
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>List Treatments</h1>
+        
+        <div class="add-treatment">
+            <a href="treatment_create.html" class="btn">Create New Treatment</a>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>ID Kunjungan</th>
+                    <th>ID Klien</th>
+                    <th>Nama Hewan</th>
+                    <th>Perawat Hewan</th>
+                    <th>Dokter Hewan</th>
+                    <th>Front Desk Officer</th>
+                    <th>Jenis Perawatan</th>
+                    <th>Catatan Medis</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>XJRC01</td>
+                    <td>F00133</td>
+                    <td>Sweet</td>
+                    <td>joko@example.com</td>
+                    <td class="doctor-email">ibnu@example.com</td>
+                    <td>tina@example.com</td>
+                    <td>TRM001 - Dental Care</td>
+                    <td>Obesitas</td>
+                    <td class="action-btns">
+                        <a href="treatment_edit.html?id=XJRC01" class="btn btn-edit">Edit</a>
+                        <a href="treatment_delete.html?id=XJRC01" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>XJRC02</td>
+                    <td>WI23</td>
+                    <td>Bucky</td>
+                    <td>agas@example.com</td>
+                    <td class="doctor-email">safira@example.com</td>
+                    <td>tri@example.com</td>
+                    <td>TRM002 - Parasite Control</td>
+                    <td>Sudah baik</td>
+                    <td class="action-btns">
+                        <a href="treatment_edit.html?id=XJRC02" class="btn btn-edit">Edit</a>
+                        <a href="treatment_delete.html?id=XJRC02" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>XJMC03</td>
+                    <td>PICT32</td>
+                    <td>Homeroy</td>
+                    <td>budi@example.com</td>
+                    <td class="doctor-email">kawa@example.com</td>
+                    <td>tono@example.com</td>
+                    <td>TRM003 - Flea Treatment</td>
+                    <td>Sakit</td>
+                    <td class="action-btns">
+                        <a href="treatment_edit.html?id=XJMC03" class="btn btn-edit">Edit</a>
+                        <a href="treatment_delete.html?id=XJMC03" class="btn btn-delete">Delete</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

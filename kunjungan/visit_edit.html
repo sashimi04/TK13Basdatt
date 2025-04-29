@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - Update Kunjungan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="datetime-local"] {
+            padding: 9px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-save {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-save:hover {
+            background-color: #45a049;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Update Kunjungan</h1>
+        
+        <form id="editVisitForm">
+            <div class="form-group">
+                <label>ID Kunjungan</label>
+                <div style="padding: 10px; background-color: #f9f9f9; border-radius: 4px; border: 1px solid #ddd;">KJN20240001</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="client-id">ID Klien</label>
+                <select id="client-id" required>
+                    <option value="440e8400-e29b-41d4-a716-446655440000" selected>Nurul Fadilah</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440001">Reza Maulana Kurniawan</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440002">Vina Maharani</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440003">Ilham Pratama</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440004">Dita Ayu Ningtyas</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pet-name">Nama Hewan</label>
+                <select id="pet-name" required>
+                    <option value="Milo" selected>Milo</option>
+                    <option value="Oscar">Oscar</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="vet">Dokter Hewan</label>
+                <select id="vet" required>
+                    <option value="550e8400-e29b-41d4-a716-446655440010" selected>dr. Ibnu</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440011">dr. Safira</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440012">dr. Kawa</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440013">dr. Nanu</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440014">dr. Rizki</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="nurse">Perawat Hewan</label>
+                <select id="nurse" required>
+                    <option value="550e8400-e29b-41d4-a716-446655440005" selected>Tina</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440006">Tini</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440007">Tono</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440008">Budi</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440009">Agas</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="visit-type">Metode Kunjungan</label>
+                <select id="visit-type" required>
+                    <option value="Janji Temu" selected>Janji Temu</option>
+                    <option value="Walk-In">Walk-In</option>
+                    <option value="Darurat">Darurat</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="start-time">Waktu Mulai Penanganan</label>
+                <input type="datetime-local" id="start-time" value="2024-01-10T09:00" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="end-time">Waktu Selesai Penanganan</label>
+                <input type="datetime-local" id="end-time" value="2024-01-10T10:15" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="window.location.href='visit_list.html'">Cancel</button>
+                <button type="submit" class="btn btn-save">Update</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('editVisitForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Perubahan kunjungan berhasil disimpan!');
+            window.location.href = 'visit_list.html';
+        });
+    </script>
+</body>
+</html>
