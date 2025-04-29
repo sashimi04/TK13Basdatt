@@ -1,7 +1,24 @@
 <!-- path=petclinic/templates/jenis_hewan_list.html -->
 {% extends 'base.html' %}
 {% block content %}
-<div x-data="{ showJenisForm: false, isEdit: false, jenisForm: { nama: '' } }" class="p-8 bg-white rounded-xl shadow">
+<div x-data="{ 
+    showJenisForm: false, 
+    showDeleteModal: false,
+    isEdit: false, 
+    jenisForm: { nama: '' },
+    jenisToDelete: null,
+    prepareDeleteJenis(id, nama) {
+        this.jenisToDelete = { id: id, nama: nama };
+        this.showDeleteModal = true;
+    },
+    confirmDeleteJenis() {
+        if (this.jenisToDelete) {
+            deleteJenis(this.jenisToDelete.id);
+            this.showDeleteModal = false;
+            this.jenisToDelete = null;
+        }
+    }
+}" class="p-8 bg-white rounded-xl shadow">
     <h1 class="text-4xl font-bold mb-6">Daftar Jenis Hewan</h1>
     <div class="flex justify-end mb-6">
         <button @click="showJenisForm=true; isEdit=false; jenisForm.nama=''" class="btn-create bg-slate-900 text-white px-4 py-2 rounded-lg shadow hover:bg-slate-800 transition duration-200 flex items-center space-x-2">
@@ -26,7 +43,7 @@
                     <td class="px-6 py-4">{{ jenis.nama }}</td>
                     <td class="px-6 py-4 flex space-x-2">
                         <button @click="isEdit=true; jenisForm.nama='{{ jenis.nama }}'; showJenisForm=true;" class="btn-update bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-500 transition duration-200">Update</button>
-                        <button @click="deleteJenis(jenis.id)" class="btn-delete bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-400 transition duration-200">Delete</button>
+                        <button @click="prepareDeleteJenis('{{ jenis.id }}', '{{ jenis.nama }}')" class="btn-delete bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-400 transition duration-200">Delete</button>
                     </td>
                 </tr>
                 {% endfor %}
@@ -45,6 +62,25 @@
                     <button type="submit" class="bg-slate-900 text-white rounded-lg px-5 py-2 hover:bg-slate-800 transition duration-200">Save</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- Add Delete Confirmation Modal -->
+    <div x-show="showDeleteModal" 
+         class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-xl w-[28rem] p-8">
+            <h2 class="text-2xl font-bold text-red-600 mb-4">Konfirmasi Hapus</h2>
+            <p class="mb-6">Apakah Anda yakin ingin menghapus jenis hewan: <span x-text="jenisToDelete?.nama" class="font-semibold"></span>?</p>
+            <div class="flex justify-end space-x-3">
+                <button @click="showDeleteModal = false" 
+                        class="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-100">
+                    Batal
+                </button>
+                <button @click="confirmDeleteJenis()" 
+                        class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-400">
+                    Hapus
+                </button>
+            </div>
         </div>
     </div>
 </div>
