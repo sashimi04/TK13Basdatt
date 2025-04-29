@@ -1,0 +1,54 @@
+<!-- path=petclinic/templates/hewan_list.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div class="p-8">
+    <h1 class="text-4xl font-bold mb-6">Daftar Hewan Peliharaan</h1>
+    <button @click="showCreateModal = true" class="bg-slate-900 hover:bg-slate-800 text-white rounded-lg px-4 py-2">
+        <span class="material-icons">add</span> Tambah Hewan Peliharaan
+    </button>
+    <table class="min-w-full divide-y divide-gray-200 mt-4">
+        <thead class="bg-gray-100">
+            <tr>
+                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">No</th>
+                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Pemilik</th>
+                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Jenis Hewan</th>
+                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Nama</th>
+                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Tanggal Lahir</th>
+                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Foto</th>
+                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Action</th>
+            </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+            <!-- Loop through hewan_list -->
+            {% for hewan in hewan_list %}
+            <tr>
+                <td class="px-6 py-4">{{ forloop.counter }}</td>
+                <td class="px-6 py-4">{{ hewan.pemilik }}</td>
+                <td class="px-6 py-4">{{ hewan.jenis }}</td>
+                <td class="px-6 py-4">{{ hewan.nama }}</td>
+                <td class="px-6 py-4">{{ hewan.tanggal_lahir|date:"j F Y" }}</td>
+                <td class="px-6 py-4"><img src="{{ hewan.foto }}" class="w-12 h-12 rounded object-cover"></td>
+                <td class="px-6 py-4">
+                    <button @click="showUpdateModal = true" class="bg-blue-600 text-white rounded-lg px-2 py-1">Update</button>
+                    <button @click="confirmDelete(hewan.id)" class="bg-red-500 text-white rounded-lg px-2 py-1">Delete</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- Modal Create -->
+<div x-show="showCreateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div class="bg-white rounded-xl shadow-xl p-8 w-[28rem]">
+        <h2 class="text-2xl font-bold mb-4">Tambah Hewan Peliharaan</h2>
+        <form @submit.prevent="createHewan">
+            <input type="text" placeholder="Nama Hewan" x-model="newHewan.nama" class="border border-gray-200 rounded-lg w-full p-2 mb-4" required>
+            <input type="date" x-model="newHewan.tanggal_lahir" class="border border-gray-200 rounded-lg w-full p-2 mb-4" required>
+            <input type="url" placeholder="URL Foto" x-model="newHewan.foto" class="border border-gray-200 rounded-lg w-full p-2 mb-4" required>
+            <button type="submit" class="bg-slate-900 text-white rounded-lg px-4 py-2">Simpan</button>
+            <button @click="showCreateModal = false" class="border border-gray-200 rounded-lg px-4 py-2">Batal</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

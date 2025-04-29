@@ -1,0 +1,51 @@
+<!-- path=petclinic/templates/jenis_hewan_list.html -->
+{% extends 'base.html' %}
+{% block content %}
+<div x-data="{ showJenisForm: false, isEdit: false, jenisForm: { nama: '' } }" class="p-8 bg-white rounded-xl shadow">
+    <h1 class="text-4xl font-bold mb-6">Daftar Jenis Hewan</h1>
+    <div class="flex justify-end mb-6">
+        <button @click="showJenisForm=true; isEdit=false; jenisForm.nama=''" class="btn-create bg-slate-900 text-white px-4 py-2 rounded-lg shadow hover:bg-slate-800 transition duration-200 flex items-center space-x-2">
+            <span class="material-icons">add</span> <span>+ Create New Animal Type</span>
+        </button>
+    </div>
+    <div class="overflow-x-auto rounded-lg shadow">
+        <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">No</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">ID Jenis</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Nama Jenis</th>
+                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Action</th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                {% for jenis in jenis_hewan_list %}
+                <tr>
+                    <td class="px-6 py-4">{{ forloop.counter }}</td>
+                    <td class="px-6 py-4">{{ jenis.id }}</td>
+                    <td class="px-6 py-4">{{ jenis.nama }}</td>
+                    <td class="px-6 py-4 flex space-x-2">
+                        <button @click="isEdit=true; jenisForm.nama='{{ jenis.nama }}'; showJenisForm=true;" class="btn-update bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-500 transition duration-200">Update</button>
+                        <button @click="deleteJenis(jenis.id)" class="btn-delete bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-400 transition duration-200">Delete</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Create/Update Jenis Hewan -->
+    <div x-show="showJenisForm" @click.away="showJenisForm = false" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style="display: none;" x-bind:style="{ display: showJenisForm ? 'flex' : 'none' }">
+        <div class="bg-white rounded-xl shadow-xl w-[28rem] p-8">
+            <h2 class="text-2xl font-bold mb-4" x-text="isEdit ? 'Update Animal Type' : 'Create New Animal Type'"></h2>
+            <form @submit.prevent="isEdit ? updateJenis() : createJenis()">
+                <input type="text" placeholder="Nama Jenis" x-model="jenisForm.nama" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:ring-2 focus:ring-indigo-500" required>
+                <div class="flex justify-between">
+                    <button type="button" @click="showJenisForm = false" class="border border-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-100 transition duration-200">Cancel</button>
+                    <button type="submit" class="bg-slate-900 text-white rounded-lg px-5 py-2 hover:bg-slate-800 transition duration-200">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

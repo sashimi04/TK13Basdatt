@@ -1,0 +1,76 @@
+<!-- path=petclinic/templates/base.html -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pet Clinic</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body class="p-8 bg-gray-50" x-data="{ userType: 'Guest' }"> <!-- Default userType set to Guest -->
+    <!-- Navbar -->
+    <nav class="bg-indigo-600 p-4 rounded-lg mb-6">
+        <div class="flex justify-between items-center">
+            <div class="text-white text-lg font-bold">Pet Clinic</div>
+            <div>
+                <template x-if="userType === 'Guest'">
+                    <div>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200">Login</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Registrasi</button>
+                    </div>
+                </template>
+                <template x-if="userType === 'Klien'">
+                    <div>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200">Dashboard</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Kelola Hewan Peliharaan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Daftar Kunjungan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Daftar Vaksinasi</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Logout</button>
+                    </div>
+                </template>
+                <template x-if="userType === 'FrontDeskOfficer'">
+                    <div>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200">Dashboard</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Kelola Jenis Hewan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Kelola Hewan Peliharaan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Kelola Kunjungan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Daftar Klien</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Logout</button>
+                    </div>
+                </template>
+                <template x-if="userType === 'DokterHewan'">
+                    <div>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200">Dashboard</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Daftar Jenis Hewan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Perawatan Hewan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Daftar Kunjungan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Manajemen Obat</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Manajemen Jenis Perawatan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Manajemen Pemberian Obat</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Logout</button>
+                    </div>
+                </template>
+                <template x-if="userType === 'PerawatHewan'">
+                    <div>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200">Dashboard</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Manajemen Obat</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Manajemen Jenis Perawatan</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Manajemen Vaksin</button>
+                        <button class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Logout</button>
+                    </div>
+                </template>
+                <!-- Tombol untuk Hewan Peliharaan dan Jenis Hewan dengan Fungsionalitas -->
+                <div>
+                    <a href="{% url 'hewan_list' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Hewan Peliharaan</a>
+                    <a href="{% url 'jenis_hewan_list' %}" class="text-white hover:bg-indigo-700 px-3 py-2 rounded transition duration-200 ml-4">Jenis Hewan</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Konten Halaman -->
+    {% block content %}
+    {% endblock %}
+</body>
+</html>
