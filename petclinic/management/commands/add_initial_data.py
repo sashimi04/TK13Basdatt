@@ -1,5 +1,5 @@
 from django.core.management.base import BaseCommand
-from petclinic.models import JenisHewan, Pemilik, HewanPeliharaan
+from petclinicc.models import JenisHewan, Pemilik, HewanPeliharaan
 from datetime import date
 
 class Command(BaseCommand):
