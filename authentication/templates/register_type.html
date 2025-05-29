@@ -47,15 +47,15 @@
     <div class="registration-types">
         <div class="type-column">
             <h2>Pegawai</h2>
-            <div class="type-option" onclick="location.href='register_frontdesk.html'">Front-Desk Officer</div>
-            <div class="type-option" onclick="location.href='register_vet.html'">Dokter Hewan</div>
-            <div class="type-option" onclick="location.href='register_nurse.html'">Perawat Hewan</div>
+            <div class="type-option" onclick="location.href='{% url 'register_frontdesk' %}'">Front-Desk Officer</div>
+            <div class="type-option" onclick="location.href='{% url 'register_veterinarian' %}'">Dokter Hewan</div>
+            <div class="type-option" onclick="location.href='{% url 'register_nurse' %}'">Perawat Hewan</div>
         </div>
         
         <div class="type-column">
             <h2>Klien</h2>
-            <div class="type-option" onclick="location.href='register_individual.html'">Individu</div>
-            <div class="type-option" onclick="location.href='register_company.html'">Perusahaan</div>
+            <div class="type-option" onclick="location.href='{% url 'register_individual' %}'">Individu</div>
+            <div class="type-option" onclick="location.href='{% url 'register_company' %}'">Perusahaan</div>
         </div>
     </div>
     

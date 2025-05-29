@@ -57,36 +57,48 @@
             border: 0;
             border-top: 1px solid #eee;
         }
+        .error-message {
+            color: red;
+            text-align: center;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
     <h1>FORM REGISTER</h1>
     <h2>Front-Desk Officer</h2>
     
-    <form>
+    {% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+    {% endif %}
+    
+    <form method="POST" action="{% url 'register_frontdesk' %}">
+        {% csrf_token %}
         <div class="form-group">
             <label for="email" class="required">Email</label>
-            <input type="email" id="email" placeholder="Email">
+            <input type="email" id="email" name="email" placeholder="Email" required>
         </div>
         
         <div class="form-group">
             <label for="password" class="required">Password</label>
-            <input type="password" id="password" placeholder="Password">
+            <input type="password" id="password" name="password" placeholder="Password" required>
         </div>
         
         <div class="form-group">
             <label for="phone" class="required">Nomor Telepon</label>
-            <input type="tel" id="phone" placeholder="Nomor Telepon">
+            <input type="tel" id="phone" name="phone" placeholder="Nomor Telepon" required>
         </div>
         
         <div class="form-group">
             <label for="hire-date" class="required">Tanggal Diterima</label>
-            <input type="date" id="hire-date" placeholder="Tanggal Diterima">
+            <input type="date" id="hire-date" name="hire-date" placeholder="Tanggal Diterima" required>
         </div>
         
         <div class="form-group">
             <label for="address" class="required">Alamat</label>
-            <textarea id="address" rows="3" placeholder="Alamat"></textarea>
+            <textarea id="address" name="address" rows="3" placeholder="Alamat" required></textarea>
         </div>
         
         <button type="submit">Register</button>
