@@ -1,0 +1,315 @@
+<!-- path=petclinic/templates/jenis_hewan_list.html -->
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8" x-data="jenisHewanList()">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Daftar Jenis Hewan</h1>
+        {% if user_role == 'FrontDeskOfficer' %}
+        <button @click="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Tambah Jenis Hewan
+        </button>
+        {% endif %}
+    </div>
+
+    <!-- Search (optional for now, but keep structure) -->
+    <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input type="text" x-model="search" placeholder="Cari jenis hewan..."
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+        <!-- No filter dropdown needed for jenis hewan list itself -->
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Jenis</th>
+                    {% if user_role == 'FrontDeskOfficer' %}
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+                <template x-for="jenis in filteredJenis" :key="jenis.id">
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap" x-text="jenis.id"></td>
+                        <td class="px-6 py-4 whitespace-nowrap" x-text="jenis.nama_jenis"></td>
+                        {% if user_role == 'FrontDeskOfficer' %}
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <button @click="editJenis(jenis)" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                            <!-- Disable delete button if the jenis is used by any hewan -->
+                            <button x-show="!jenis.is_used" @click="deleteJenis(jenis)" class="text-red-600 hover:text-red-900">Hapus</button>
+                            <span x-show="jenis.is_used" class="text-gray-500 text-sm">Used</span>
+                        </td>
+                        {% endif %}
+                    </tr>
+                </template>
+                 <tr x-show="filteredJenis.length === 0">
+                    <td colspan="3" class="px-6 py-4 text-center text-gray-500">Tidak ada jenis hewan yang ditemukan.</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal -->
+    <div x-show="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" style="display: none;">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" x-text="modalTitle"></h3>
+                <form @submit.prevent="saveJenis">
+                    <!-- ID field is read-only or hidden for create -->
+                     <div class="mb-4" x-show="isEditing">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="jenis_id">
+                            ID Jenis
+                        </label>
+                        <input type="text" id="jenis_id" x-model="formData.id"
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 cursor-not-allowed"
+                               readonly>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="nama_jenis">
+                            Nama Jenis
+                        </label>
+                        <input type="text" id="nama_jenis" x-model="formData.nama_jenis"
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                               required>
+                    </div>
+
+                    <div class="flex justify-end space-x-3 mt-4">
+                        <button type="button" @click="closeModal"
+                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                            Batal
+                        </button>
+                        <button type="submit"
+                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div x-show="showDeleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" style="display: none;">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Delete Animal Type</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">
+                        Apakah kamu yakin untuk menghapus Jenis Hewan 
+                        <span class="font-bold text-red-600" x-text="jenisToDelete ? jenisToDelete.nama_jenis : '';"></span> dengan ID 
+                        <span class="font-bold text-red-600" x-text="jenisToDelete ? jenisToDelete.id : '';"></span>?
+                    </p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="confirm-delete-btn" @click="confirmDeleteAction()" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        Confirm Deletion
+                    </button>
+                    <button id="cancel-delete-btn" @click="closeDeleteModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('jenisHewanList', () => ({
+        jenisList: [],
+        search: '',
+        showModal: false,
+        modalTitle: '',
+        formData: {
+            id: '',
+            nama_jenis: ''
+        },
+        isEditing: false,
+        showDeleteModal: false,
+        jenisToDelete: null,
+
+        init() {
+            this.fetchJenis();
+        },
+
+        get filteredJenis() {
+            return this.jenisList.filter(jenis => {
+                return jenis.nama_jenis.toLowerCase().includes(this.search.toLowerCase());
+            });
+        },
+
+        async fetchJenis() {
+            try {
+                const response = await fetch('/api/jenis-hewan/');
+                if (!response.ok) {
+                    // Use global alert store if available
+                    if (Alpine.store('alerts')) {
+                        Alpine.store('alerts').showErrorAlert('Gagal mengambil data jenis hewan: ' + response.statusText);
+                    } else {
+                         alert('Gagal mengambil data jenis hewan: ' + response.statusText);
+                    }
+                     throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                this.jenisList = data;
+            } catch (error) {
+                console.error('Error fetching jenis hewan:', error);
+                 // Use global alert store if available
+                if (Alpine.store('alerts')) {
+                     Alpine.store('alerts').showErrorAlert('Terjadi kesalahan saat mengambil data jenis hewan: ' + error.message);
+                } else {
+                     alert('Terjadi kesalahan saat mengambil data jenis hewan: ' + error.message);
+                }
+            }
+        },
+
+        openModal(jenis = null) {
+            console.log('Opening modal for jenis hewan:', jenis);
+            this.isEditing = !!jenis;
+            this.modalTitle = this.isEditing ? 'Edit Jenis Hewan' : 'Tambah Jenis Hewan';
+            if (jenis) {
+                this.formData = { ...jenis }; // Copy existing data
+            } else {
+                 this.formData = { id: '', nama_jenis: '' }; // Reset form for create
+            }
+            this.showModal = true;
+        },
+
+        closeModal() {
+            this.showModal = false;
+            this.formData = { id: '', nama_jenis: '' }; // Reset form
+            this.isEditing = false;
+        },
+
+        async saveJenis() {
+            try {
+                const url = '/api/jenis-hewan/';
+                const method = this.isEditing ? 'PUT' : 'POST';
+                
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(this.formData)
+                });
+
+                const responseData = await response.json();
+                if (!response.ok) {
+                     // Use global alert store if available
+                     if (Alpine.store('alerts')) {
+                         Alpine.store('alerts').showErrorAlert(responseData.error || 'Gagal menyimpan jenis hewan');
+                     } else {
+                         alert(responseData.error || 'Gagal menyimpan jenis hewan');
+                     }
+                     throw new Error(responseData.error || 'Gagal menyimpan jenis hewan');
+                } else {
+                     // Use global alert store if available
+                     if (Alpine.store('alerts')) {
+                         Alpine.store('alerts').showSuccessAlert(responseData.message || (this.isEditing ? 'Jenis hewan berhasil diperbarui' : 'Jenis hewan berhasil ditambahkan'));
+                     } else {
+                        alert(responseData.message || (this.isEditing ? 'Jenis hewan berhasil diperbarui' : 'Jenis hewan berhasil ditambahkan'));
+                     }
+                    this.fetchJenis(); // Refresh list
+                    this.closeModal();
+                }
+
+            } catch (error) {
+                console.error('Error saving jenis hewan:', error);
+                 // Use global alert store if available
+                 if (Alpine.store('alerts')) {
+                     Alpine.store('alerts').showErrorAlert('Terjadi kesalahan: ' + error.message);
+                 } else {
+                     alert('Terjadi kesalahan: ' + error.message);
+                 }
+            }
+        },
+
+        editJenis(jenis) {
+            this.openModal(jenis);
+        },
+
+        deleteJenis(jenis) {
+            // Store jenis data and show the confirmation modal
+            console.log('Delete button clicked for jenis hewan:', jenis);
+            this.jenisToDelete = jenis;
+            this.showDeleteModal = true;
+        },
+
+        async confirmDeleteAction() {
+            if (!this.jenisToDelete) return;
+
+            try {
+                // API DELETE expects ID in query params based on your urls.py
+                const response = await fetch(`/api/jenis-hewan/?id=${this.jenisToDelete.id}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': this.getCookie('csrftoken')
+                    }
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                     // Use global alert store if available
+                     if (Alpine.store('alerts')) {
+                         Alpine.store('alerts').showErrorAlert(responseData.error || 'Gagal menghapus jenis hewan');
+                     } else {
+                         alert(responseData.error || 'Gagal menghapus jenis hewan');
+                     }
+                     throw new Error(responseData.error || 'Gagal menghapus jenis hewan');
+                } else {
+                     // Use global alert store if available
+                     if (Alpine.store('alerts')) {
+                         Alpine.store('alerts').showSuccessAlert(responseData.message || 'Jenis hewan berhasil dihapus');
+                     } else {
+                         alert(responseData.message || 'Jenis hewan berhasil dihapus');
+                     }
+                     this.fetchJenis(); // Refresh list
+                }
+
+            } catch (error) {
+                console.error('Error deleting jenis hewan:', error);
+                 // Use global alert store if available
+                 if (Alpine.store('alerts')) {
+                     Alpine.store('alerts').showErrorAlert('Terjadi kesalahan: ' + error.message);
+                 } else {
+                     alert('Terjadi kesalahan: ' + error.message);
+                 }
+            }
+
+            finally {
+                this.closeDeleteModal();
+            }
+        },
+
+        closeDeleteModal() {
+            this.showDeleteModal = false;
+            this.jenisToDelete = null;
+        },
+
+        getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    }));
+});
+</script>
+{% endblock %}

@@ -1,0 +1,32 @@
+<div class="form-group">
+    <label>Jadwal Praktik</label>
+    <div id="schedule-list">
+        {% if profile.schedules %}
+            {% for sch in profile.schedules %}
+                <div class="schedule-row">
+                    <input type="text" name="schedule_day[]" value="{{ sch.day }}" placeholder="Hari" required>
+                    <input type="text" name="schedule_time[]" value="{{ sch.time }}" placeholder="Jam" required>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="schedule-row">
+                <input type="text" name="schedule_day[]" placeholder="Hari" required>
+                <input type="text" name="schedule_time[]" placeholder="Jam" required>
+            </div>
+        {% endif %}
+    </div>
+    <button type="button" onclick="addScheduleRow()" class="btn btn-secondary" style="margin-top:5px;">Tambah Jadwal</button>
+</div>
+
+<script>
+function addScheduleRow() {
+    var container = document.getElementById('schedule-list');
+    var row = document.createElement('div');
+    row.className = 'schedule-row';
+    row.innerHTML = `
+        <input type="text" name="schedule_day[]" placeholder="Hari" required>
+        <input type="text" name="schedule_time[]" placeholder="Jam" required>
+    `;
+    container.appendChild(row);
+}
+</script>

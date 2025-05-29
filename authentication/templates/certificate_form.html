@@ -1,0 +1,32 @@
+<div class="form-group">
+    <label>Daftar Sertifikat Kompetensi</label>
+    <div id="certificate-list">
+        {% if profile.certificates %}
+            {% for cert in profile.certificates %}
+                <div class="certificate-row">
+                    <input type="text" name="cert_number[]" value="{{ cert.number }}" placeholder="Nomor Sertifikat" required>
+                    <input type="text" name="cert_name[]" value="{{ cert.name }}" placeholder="Nama Sertifikat" required>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="certificate-row">
+                <input type="text" name="cert_number[]" placeholder="Nomor Sertifikat" required>
+                <input type="text" name="cert_name[]" placeholder="Nama Sertifikat" required>
+            </div>
+        {% endif %}
+    </div>
+    <button type="button" onclick="addCertificateRow()" class="btn btn-secondary" style="margin-top:5px;">Tambah Sertifikat</button>
+</div>
+
+<script>
+function addCertificateRow() {
+    var container = document.getElementById('certificate-list');
+    var row = document.createElement('div');
+    row.className = 'certificate-row';
+    row.innerHTML = `
+        <input type="text" name="cert_number[]" placeholder="Nomor Sertifikat" required>
+        <input type="text" name="cert_name[]" placeholder="Nama Sertifikat" required>
+    `;
+    container.appendChild(row);
+}
+</script>

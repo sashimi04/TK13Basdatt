@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - Registration Type</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .registration-types {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        .type-column {
+            width: 48%;
+        }
+        .type-option {
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .type-option:hover {
+            background-color: #f5f5f5;
+        }
+        .note {
+            margin-top: 30px;
+            font-style: italic;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>REGISTRASI AKUN</h1>
+    
+    <div class="registration-types">
+        <div class="type-column">
+            <h2>Pegawai</h2>
+            <div class="type-option" onclick="location.href='{% url 'register_frontdesk' %}'">Front-Desk Officer</div>
+            <div class="type-option" onclick="location.href='{% url 'register_vet' %}'">Dokter Hewan</div>
+            <div class="type-option" onclick="location.href='{% url 'register_nurse' %}'">Perawat Hewan</div>
+        </div>
+        
+        <div class="type-column">
+            <h2>Klien</h2>
+            <div class="type-option" onclick="location.href='{% url 'register_individual' %}'">Individu</div>
+            <div class="type-option" onclick="location.href='{% url 'register_company' %}'">Perusahaan</div>
+        </div>
+    </div>
+    
+    <p class="note">Silakan pilih tipe akun yang sesuai dengan peran Anda</p>
+</body>
+</html>

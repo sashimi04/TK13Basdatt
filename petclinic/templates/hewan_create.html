@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mx-auto p-6 max-w-md bg-white shadow rounded">
+  <h1 class="text-2xl font-bold mb-6">Create New Pet</h1>
+  <form method="post" action="{% url 'animals:hewan_create' %}">
+    {% csrf_token %}
+
+    {# Pemilik #}
+    <div class="mb-4">
+      <label for="id_pemilik" class="block text-sm font-medium mb-1">Pemilik</label>
+      <select name="pemilik" id="id_pemilik" required
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+        <option value="">Pilih pemilik</option>
+        {% for klien in klien_list %}
+          <option value="{{ klien.id }}">{{ klien.get_full_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {# Jenis Hewan #}
+    <div class="mb-4">
+      <label for="id_jenis" class="block text-sm font-medium mb-1">Jenis Hewan</label>
+      <select name="jenis" id="id_jenis" required
+              class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-indigo-500">
+        <option value="">Pilih jenis hewan</option>
+        {% for jenis in jenis_hewan_list %}
+          <option value="{{ jenis.id }}">{{ jenis.nama_jenis }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    {# Nama Hewan, Tgl Lahir, URL Foto #}
+    <div class="mb-4">
+      <label for="id_nama" class="block text-sm font-medium mb-1">Nama Hewan</label>
+      <input type="text" name="nama" id="id_nama" required
+             class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-indigo-500" />
+    </div>
+    <div class="mb-4">
+      <label for="id_tgl" class="block text-sm font-medium mb-1">Tanggal Lahir Hewan</label>
+      <input type="date" name="tanggal_lahir" id="id_tgl" required
+             class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-indigo-500" />
+    </div>
+    <div class="mb-4">
+      <label for="id_url" class="block text-sm font-medium mb-1">URL Foto Hewan</label>
+      <input type="url" name="url_foto" id="id_url" required
+             placeholder="https://example.com/foto.jpg"
+             class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-indigo-500" />
+    </div>
+
+    <div class="flex justify-end space-x-3">
+      <a href="{% url 'animals:hewan_list' %}"
+         class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-100">
+        Cancel
+      </a>
+      <button type="submit"
+              class="px-4 py-2 bg-gray-900 text-white rounded hover:bg-gray-800">
+        Create
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

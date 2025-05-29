@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Clinic - Create Kunjungan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+        select, input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="datetime-local"] {
+            padding: 9px;
+        }
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-submit {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-submit:hover {
+            background-color: #45a049;
+        }
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+        }
+        .btn-cancel:hover {
+            background-color: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Kunjungan</h1>
+        
+        <form id="createVisitForm">
+            <div class="form-group">
+                <label for="client-id">ID Klien</label>
+                <select id="client-id" required>
+                    <option value="">Pilih ID Klien</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440000">Nurul Fadilah</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440001">Reza Maulana Kurniawan</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440002">Vina Maharani</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440003">Ilham Pratama</option>
+                    <option value="440e8400-e29b-41d4-a716-446655440004">Dita Ayu Ningtyas</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="pet-name">Nama Hewan</label>
+                <select id="pet-name" required>
+                    <option value="">Pilih Nama Hewan</option>
+                    <option value="Milo">Milo</option>
+                    <option value="Luna">Luna</option>
+                    <option value="Max">Max</option>
+                    <option value="Bella">Bella</option>
+                    <option value="Charlie">Charlie</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="vet">Dokter Hewan</label>
+                <select id="vet" required>
+                    <option value="">Pilih Dokter Hewan</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440010">dr. Ibnu</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440011">dr. Safira</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440012">dr. Kawa</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440013">dr. Nanu</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440014">dr. Rizki</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="nurse">Perawat Hewan</label>
+                <select id="nurse" required>
+                    <option value="">Pilih Perawat Hewan</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440005">Tina</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440006">Tini</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440007">Tono</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440008">Budi</option>
+                    <option value="550e8400-e29b-41d4-a716-446655440009">Agas</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="visit-type">Metode Kunjungan</label>
+                <select id="visit-type" required>
+                    <option value="">Pilih metode kunjungan</option>
+                    <option value="Janji Temu">Janji Temu</option>
+                    <option value="Walk-In">Walk-In</option>
+                    <option value="Darurat">Darurat</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="start-time">Waktu Mulai Penanganan</label>
+                <input type="datetime-local" id="start-time" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="end-time">Waktu Selesai Penanganan</label>
+                <input type="datetime-local" id="end-time" required>
+            </div>
+            
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" onclick="window.location.href='visit_list.html'">Cancel</button>
+                <button type="submit" class="btn btn-submit">Create</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('createVisitForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Kunjungan berhasil dibuat!');
+            window.location.href = 'visit_list.html';
+        });
+
+        // Dynamic pet selection based on client
+        document.getElementById('client-id').addEventListener('change', function() {
+            const clientId = this.value;
+            const petSelect = document.getElementById('pet-name');
+            
+            // Clear existing options except the first one
+            while (petSelect.options.length > 1) {
+                petSelect.remove(1);
+            }
+            
+            // Add pets based on selected client (this would be dynamic in a real app)
+            if (clientId === '440e8400-e29b-41d4-a716-446655440000') {
+                addPetOption(petSelect, 'Milo');
+                addPetOption(petSelect, 'Oscar');
+            } else if (clientId === '440e8400-e29b-41d4-a716-446655440001') {
+                addPetOption(petSelect, 'Luna');
+                addPetOption(petSelect, 'Leo');
+            } else if (clientId === '440e8400-e29b-41d4-a716-446655440002') {
+                addPetOption(petSelect, 'Max');
+                addPetOption(petSelect, 'Ruby');
+            } else if (clientId === '440e8400-e29b-41d4-a716-446655440003') {
+                addPetOption(petSelect, 'Bella');
+                addPetOption(petSelect, 'Simba');
+            } else if (clientId === '440e8400-e29b-41d4-a716-446655440004') {
+                addPetOption(petSelect, 'Charlie');
+                addPetOption(petSelect, 'Lucky');
+            }
+        });
+
+        function addPetOption(selectElement, petName) {
+            const option = document.createElement('option');
+            option.value = petName;
+            option.textContent = petName;
+            selectElement.appendChild(option);
+        }
+    </script>
+</body>
+</html>

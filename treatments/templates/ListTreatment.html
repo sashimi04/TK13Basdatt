@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <title>List Treatment Type</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 250px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+        button {
+            padding: 8px 12px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: center;
+            padding: 12px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        td button {
+            margin: 2px;
+            font-size: 14px;
+            background-color: #2196F3;
+        }
+        td button:nth-child(2) {
+            background-color: #FFC107;
+        }
+        td button:nth-child(3) {
+            background-color: #f44336;
+        }
+        .add-button {
+            margin-top: 20px;
+            background-color: #4CAF50;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<h1>List Treatment Type</h1>
+
+<input type="text" placeholder="Search Treatment Name">
+<button>🔍</button>
+<button class="btn btn-success my-3" data-bs-toggle="modal" data-bs-target="#addTreatmentModal">+ Add New Treatment</button>
+
+<table>
+    <thead>
+    <tr>
+        <th>No</th>
+        <th>Kode Jenis Perawatan</th>
+        <th>Nama Jenis Perawatan</th>
+        <th>Biaya</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>1</td>
+        <td>TRM001</td>
+        <td>Dental care</td>
+        <td>Rp250.000</td>
+        <td>
+            <!-- Update Button -->
+            <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#updateTreatmentModal">Update</button>
+
+            <!-- Delete Button -->
+            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTreatmentModal">Delete</button>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<div class="modal fade" id="addTreatmentModal" tabindex="-1" aria-labelledby="addTreatmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addTreatmentModalLabel">Add New Treatment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Add your form inputs here -->
+                <form>
+                    <div class="mb-3">
+                        <label for="treatmentName" class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="treatmentName" placeholder="Nama">
+                    </div>
+                    <div class="mb-3">
+                        <label for="treatmentPrice" class="form-label">Biaya</label>
+                        <input type="number" class="form-control" id="treatmentPrice" placeholder="Biaya">
+                    </div>
+                    <!-- You can add more fields -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="updateTreatmentModal" tabindex="-1" aria-labelledby="updateTreatmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatetreatmentModalLabel">Update treatment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="treatmentId" class="form-label">Kode Perawatan</label>
+                        <input type="text" class="form-control" id="treatmentId" value="MED001" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label for="treatmentName" class="form-label">Nama</label>
+                        <input type="text" class="form-control" id="treatmentName" placeholder="Nama">
+                    </div>
+                    <div class="mb-3">
+                        <label for="treatmentPrice" class="form-label">Biaya</label>
+                        <input type="number" class="form-control" id="treatmentPrice" placeholder="Biaya">
+                    </div>
+                    <!-- Add other fields if needed -->
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-warning">Update treatment</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="deleteTreatmentModal" tabindex="-1" aria-labelledby="deleteTreatmentModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteTreatmentModalLabel">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete this treatment?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
