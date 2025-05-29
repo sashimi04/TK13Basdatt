@@ -63,10 +63,24 @@
 <body>
 <h1>List Medicines</h1>
 
-<input type="text" placeholder="Search Medicine Name">
-<button>🔍</button>
+<form method="GET" action="{% url 'list_medicines' %}" class="d-flex">
+    <input type="text" name="search" placeholder="Search Medicine Name"
+           value="{{ search_query|default:'' }}" class="form-control me-2">
+    <button type="submit" class="btn btn-primary">🔍</button>
+</form>
+
 <button class="btn btn-success my-3" data-bs-toggle="modal" data-bs-target="#addMedicineModal">+ Add New Medicine</button>
 
+{% if messages %}
+<div class="mt-3">
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} alert-dismissible fade show">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
 <table>
     <thead>
     <tr>
@@ -80,24 +94,32 @@
     </tr>
     </thead>
     <tbody>
+    {% for medicine in medicines %}
     <tr>
-        <td>1</td>
-        <td>MED001</td>
-        <td>Penicillin</td>
-        <td>Rp50.000</td>
-        <td>100</td>
-        <td>0.1ml/kg BB</td>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ medicine.kode }}</td>
+        <td>{{ medicine.nama }}</td>
+        <td>{{ medicine.harga }}</td>
+        <td>{{ medicine.stok }}</td>
+        <td>{{ medicine.dosis }}</td>
         <td>
             <!-- Update Stock Button -->
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#updateStockModal">Update Stock</button>
 
             <!-- Update Button -->
-            <button class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#updateMedicineModal">Update</button>
+            <button class="btn btn-primary btn-sm update-stock-btn"
+                    data-bs-toggle="modal"
+                    data-bs-target="#updateStockModal">
+                Update Stock
+            </button>
 
             <!-- Delete Button -->
             <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteMedicineModal">Delete</button>
         </td>
     </tr>
+    {% empty %}
+    <tr><td colspan="7">No medicines found.</td></tr>
+    {% endfor %}
     </tbody>
 </table>
 
@@ -109,32 +131,32 @@
                 <h5 class="modal-title" id="addMedicineModalLabel">Add New Medicine</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <!-- Add your form inputs here -->
-                <form>
+            <form method="POST" action="{% url 'add_medicine' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <!-- Hapus input kode -->
                     <div class="mb-3">
-                        <label for="medicineName" class="form-label">Nama</label>
-                        <input type="text" class="form-control" id="medicineName" placeholder="Nama">
+                        <label for="medicineName" class="form-label">Nama Obat</label>
+                        <input type="text" class="form-control" id="medicineName" name="nama" required>
                     </div>
                     <div class="mb-3">
                         <label for="medicinePrice" class="form-label">Harga Satuan</label>
-                        <input type="number" class="form-control" id="medicinePrice" placeholder="Harga Satuan">
+                        <input type="number" class="form-control" id="medicinePrice" name="harga" min="0" required>
                     </div>
                     <div class="mb-3">
                         <label for="medicineDose" class="form-label">Dosis</label>
-                        <input type="text" class="form-control" id="medicineDose" placeholder="Dosis">
+                        <input type="text" class="form-control" id="medicineDose" name="dosis" required>
                     </div>
                     <div class="mb-3">
                         <label for="medicineStock" class="form-label">Stok</label>
-                        <input type="number" class="form-control" id="medicineStock" placeholder="Stok Awal">
+                        <input type="number" class="form-control" id="medicineStock" name="stok" min="0" required>
                     </div>
-                    <!-- You can add more fields -->
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Create Medicine</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
@@ -146,21 +168,27 @@
                 <h5 class="modal-title" id="updateStockModalLabel">Update Stock</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body">
-                <form>
+            <form method="POST" action="{% url 'update_stock' %}">
+                {% csrf_token %}
+                <div class="modal-body">
+                    <!-- Input tersembunyi untuk menyimpan kode obat -->
+                    <input type="hidden" id="updateStockKode" name="kode">
+
                     <div class="mb-3">
                         <label for="updateStock" class="form-label">New Stock</label>
-                        <input type="number" class="form-control" id="updateStock" placeholder="Enter new stock value">
+                        <input type="number" class="form-control" id="updateStock" name="new_stock"
+                               placeholder="Enter new stock value" min="0" required>
                     </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Update Stock</button>
-            </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                    <button type="submit" class="btn btn-primary">Update Stock</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
+
 
 <div class="modal fade" id="updateMedicineModal" tabindex="-1" aria-labelledby="updateMedicineModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -216,5 +244,23 @@
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var updateStockButtons = document.querySelectorAll('[data-bs-target="#updateStockModal"]');
+
+        updateStockButtons.forEach(function(button) {
+            button.addEventListener('click', function() {
+                // Dapatkan data dari baris tabel
+                var row = this.closest('tr');
+                var kode = row.cells[1].textContent;
+                var currentStock = row.cells[4].textContent;
+
+                // Isi data ke modal
+                document.getElementById('updateStockKode').value = kode;
+                document.getElementById('updateStock').value = currentStock;
+            });
+        });
+    });
+</script>
 </body>
 </html>

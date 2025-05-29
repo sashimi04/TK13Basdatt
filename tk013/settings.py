@@ -95,16 +95,17 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
 DATABASES = {
-    'default': env.db(),
-    
-    # {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': tmpPostgres.path.replace('/', ''),
-    #     'USER': tmpPostgres.username,
-    #     'PASSWORD': tmpPostgres.password,
-    #     'HOST': tmpPostgres.hostname,
-    #     'PORT': 5432,
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'PetClinic',
+        'USER': 'PetClinic_owner',
+        'PASSWORD': 'npg_XV1eCEQKJU6S',
+        'HOST': 'ep-black-paper-a1dwfdss-pooler.ap-southeast-1.aws.neon.tech',
+        'PORT': '5432',  # Default PostgreSQL port
+        'OPTIONS': {
+            'sslmode': 'require',  # Neon requires SSL
+        },
+    }
 }
 
 # DATABASES = {

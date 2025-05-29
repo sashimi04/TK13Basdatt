@@ -10,4 +10,6 @@ urlpatterns = [
     # path('', include('petclinic.urls')),  # Mengarahkan ke urls.py di aplikasi petclinic
     path('admin/', admin.site.urls),
     path('', include('authentication.urls')),
+    path('medicines/', include('medicines.urls')),
+    path('treatments/', include('treatments.urls')),
 ]

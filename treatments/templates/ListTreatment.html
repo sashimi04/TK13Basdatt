@@ -63,8 +63,12 @@
 <body>
 <h1>List Treatment Type</h1>
 
-<input type="text" placeholder="Search Treatment Name">
-<button>🔍</button>
+<form method="GET" action="{% url 'list_treatment' %}" class="d-flex">
+    <input type="text" name="search" placeholder="Search Treatment Name"
+           value="{{ search_query|default:'' }}" class="form-control me-2">
+    <button type="submit" class="btn btn-primary">🔍</button>
+</form>
+
 <button class="btn btn-success my-3" data-bs-toggle="modal" data-bs-target="#addTreatmentModal">+ Add New Treatment</button>
 
 <table>
@@ -78,19 +82,20 @@
     </tr>
     </thead>
     <tbody>
+    {% for treatment in treatments %}
     <tr>
-        <td>1</td>
-        <td>TRM001</td>
-        <td>Dental care</td>
-        <td>Rp250.000</td>
+        <td>{{ forloop.counter }}</td>
+        <td>{{ treatment.kode }}</td>
+        <td>{{ treatment.nama }}</td>
+        <td>{{ treatment.biaya }}</td>
         <td>
-            <!-- Update Button -->
             <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#updateTreatmentModal">Update</button>
-
-            <!-- Delete Button -->
             <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTreatmentModal">Delete</button>
         </td>
     </tr>
+    {% empty %}
+    <tr><td colspan="5">No treatments found.</td></tr>
+    {% endfor %}
     </tbody>
 </table>
 
