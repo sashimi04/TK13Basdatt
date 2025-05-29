@@ -62,43 +62,25 @@
 <body>
     <h1>FORM REGISTER</h1>
     <h2>Klien - Individu</h2>
-    
-    <form>
-        <div class="form-group">
-            <label for="email" class="required">Email</label>
-            <input type="email" id="email" placeholder="Email">
-        </div>
-        
-        <div class="form-group">
-            <label for="first-name" class="required">Nama Depan</label>
-            <input type="text" id="first-name" placeholder="Nama Depan">
-        </div>
-        
-        <div class="form-group">
-            <label for="middle-name">Nama Tengah</label>
-            <input type="text" id="middle-name" placeholder="Nama Tengah">
-        </div>
-        
-        <div class="form-group">
-            <label for="last-name" class="required">Nama Belakang</label>
-            <input type="text" id="last-name" placeholder="Nama Belakang">
-        </div>
-        
-        <div class="form-group">
-            <label for="password" class="required">Password</label>
-            <input type="password" id="password" placeholder="Password">
-        </div>
-        
-        <div class="form-group">
-            <label for="phone" class="required">Nomor Telepon</label>
-            <input type="tel" id="phone" placeholder="Nomor Telepon">
-        </div>
-        
-        <div class="form-group">
-            <label for="address" class="required">Alamat</label>
-            <textarea id="address" rows="3" placeholder="Alamat"></textarea>
-        </div>
-        
+
+    <form method="POST" action="{% url 'register_individual' %}">
+        {% csrf_token %}
+        {% if messages %}
+        <ul>
+            {% for message in messages %}
+            <li style="color: {% if message.tags == 'success' %}green{% else %}red{% endif %};">
+                {{ message }}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="text" name="first-name" placeholder="Nama Depan" required>
+        <input type="text" name="middle-name" placeholder="Nama Tengah">
+        <input type="text" name="last-name" placeholder="Nama Belakang" required>
+        <input type="text" name="phone" placeholder="Nomor Telepon" required>
+        <input type="text" name="address" placeholder="Alamat" required>
+        <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Register</button>
     </form>
     

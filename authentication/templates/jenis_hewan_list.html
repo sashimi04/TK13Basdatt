@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2>Daftar Jenis Hewan</h2>
+    
+    {% if jenis_hewan %}
+        <div class="list-group">
+            {% for jenis in jenis_hewan %}
+                <a href="{% url 'hewan_list' %}?jenis={{ jenis.jenis }}" class="list-group-item list-group-item-action">
+                    {{ jenis.jenis }}
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>Tidak ada data jenis hewan.</p>
+    {% endif %}
+    
+    <div class="mt-3">
+        <a href="{% url 'dashboard' %}" class="btn btn-secondary">Kembali</a>
+    </div>
+</div>
+
+<style>
+    .list-group-item {
+        margin-bottom: 5px;
+        border-radius: 4px;
+    }
+    .list-group-item:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+{% endblock %}

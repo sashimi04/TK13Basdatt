@@ -1,158 +1,381 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pet Clinic - Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f5f5f5;
-        }
-        .navbar {
-            background-color: #4CAF50;
-            color: white;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        }
-        .navbar-brand {
-            font-size: 20px;
-            font-weight: bold;
-        }
-        .logout-btn {
-            background-color: #d9534f;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-        .logout-btn:hover {
-            background-color: #c9302c;
-        }
-        .dashboard-container {
-            max-width: 1000px;
-            margin: 30px auto;
-            padding: 20px;
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-        .welcome-message {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #333;
-        }
-        .profile-section {
-            margin-bottom: 30px;
-        }
-        .profile-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background-color: #ddd;
-            margin-right: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 30px;
-            color: #666;
-        }
-        .profile-info h2 {
-            margin: 0;
-            color: #333;
-        }
-        .profile-info p {
-            margin: 5px 0 0;
-            color: #666;
-        }
-        .profile-details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px;
-        }
-        .detail-card {
-            background-color: #f9f9f9;
-            padding: 15px;
-            border-radius: 6px;
-        }
-        .detail-card h3 {
-            margin-top: 0;
-            color: #4CAF50;
-            font-size: 16px;
-        }
-        .detail-card p {
-            margin-bottom: 0;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-    <nav class="navbar">
-        <div class="navbar-brand">Pet Clinic - Dashboard</div>
-        <button class="logout-btn" id="logoutBtn">Logout</button>
-    </nav>
-    
-    <div class="dashboard-container">
-        <div class="welcome-message">Selamat datang di Dashboard Pet Clinic</div>
-        
-        <div class="profile-section">
-            <div class="profile-header">
-                <div class="profile-avatar">JD</div>
-                <div class="profile-info">
-                    <h2>John Doe</h2>
-                    <p>Dokter Hewan</p>
-                </div>
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="navbar">
+    <div class="navbar-brand">Pet Clinic - Dashboard</div>
+    <div class="nav-buttons">
+        <button onclick="openPasswordModal()" class="btn btn-danger">Update Password</button>
+        <a href="{% url 'logout' %}" class="logout-btn">Logout</a>
+    </div>
+</div>
+
+<div class="dashboard-container">
+    <div class="profile-section">
+        <div class="profile-header">
+            <h2>Profile {{ profile.user_type|title }}</h2>
+            <button onclick="openProfileModal()" class="btn btn-dark">Update Profile</button>
+        </div>
+
+        <div class="profile-details">
+            <div class="detail-card">
+                <h3>Nomor Identitas</h3>
+                <p>{{ profile.id_number }}</p>
             </div>
-            
-            <div class="profile-details">
-                <div class="detail-card">
-                    <h3>Email</h3>
-                    <p>john.doe@example.com</p>
-                </div>
-                <div class="detail-card">
-                    <h3>Nomor Telepon</h3>
-                    <p>081234567890</p>
-                </div>
-                <div class="detail-card">
-                    <h3>Alamat</h3>
-                    <p>Jl. Contoh No. 123, Kota Contoh</p>
-                </div>
-                <div class="detail-card">
-                    <h3>Tanggal Bergabung</h3>
-                    <p>15 Januari 2023</p>
-                </div>
-                <div class="detail-card">
-                    <h3>Nomor Izin Praktik</h3>
-                    <p>DHP-123456789</p>
-                </div>
-                <div class="detail-card">
-                    <h3>Spesialisasi</h3>
-                    <p>Hewan Peliharaan Kecil</p>
-                </div>
+
+            <div class="detail-card">
+                <h3>Email</h3>
+                <p>{{ profile.email }}</p>
             </div>
+
+            {% if profile.user_type == 'individual' %}
+                <div class="detail-card">
+                    <h3>Nama Depan</h3>
+                    <p>{{ profile.first_name }}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Nama Tengah</h3>
+                    <p>{{ profile.middle_name|default:'-' }}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Nama Belakang</h3>
+                    <p>{{ profile.last_name }}</p>
+                </div>
+            {% endif %}
+
+            {% if profile.user_type == 'frontdesk' %}
+                <div class="detail-card"><h3>Nomor Identitas</h3><p>{{ profile.id_number }}</p></div>
+                <div class="detail-card"><h3>Email</h3><p>{{ profile.email }}</p></div>
+                <div class="detail-card"><h3>Alamat</h3><p>{{ profile.address }}</p></div>
+                <div class="detail-card"><h3>Nomor Telepon</h3><p>{{ profile.phone }}</p></div>
+                <div class="detail-card"><h3>Tanggal Diterima</h3><p>{{ profile.join_date }}</p></div>
+                <div class="detail-card"><h3>Tanggal Akhir Kerja</h3><p>{{ profile.end_date|default:"-" }}</p></div>
+            {% endif %}
+
+
+            {% if profile.user_type == 'company' %}
+                <div class="detail-card">
+                    <h3>Nama Perusahaan</h3>
+                    <p>{{ profile.company_name }}</p>
+                </div>
+            {% endif %}
+
+            <div class="detail-card">
+                <h3>Alamat</h3>
+                <p>{{ profile.address }}</p>
+            </div>
+
+            <div class="detail-card">
+                <h3>Nomor Telepon</h3>
+                <p>{{ profile.phone }}</p>
+            </div>
+
+            {% if profile.user_type in 'veterinarian,nurse,frontdesk' %}
+                <div class="detail-card">
+                    <h3>Tanggal Diterima</h3>
+                    <p>{{ profile.join_date }}</p>
+                </div>
+                <div class="detail-card">
+                    <h3>Tanggal Akhir Kerja</h3>
+                    <p>{{ profile.end_date|default:'-' }}</p>
+                </div>
+            {% endif %}
+
+            {% if profile.user_type in 'veterinarian,nurse' %}
+                <div class="detail-card full-width">
+                    <h3>Daftar Sertifikat</h3>
+                    {% if profile.certificates %}
+                        <table class="certificate-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Nomor Sertifikat</th>
+                                    <th>Nama Sertifikat</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for cert in profile.certificates %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ cert.number }}</td>
+                                    <td>{{ cert.name }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>Tidak ada sertifikat</p>
+                    {% endif %}
+                </div>
+            {% endif %}
+
+            {% if profile.user_type == 'veterinarian' %}
+                <div class="detail-card full-width">
+                    <h3>Jadwal Praktik</h3>
+                    {% if profile.schedules %}
+                        <table class="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th>No</th>
+                                    <th>Hari</th>
+                                    <th>Jam</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for schedule in profile.schedules %}
+                                <tr>
+                                    <td>{{ forloop.counter }}</td>
+                                    <td>{{ schedule.day }}</td>
+                                    <td>{{ schedule.time }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    {% else %}
+                        <p>Tidak ada jadwal praktik</p>
+                    {% endif %}
+                </div>
+            {% endif %}
         </div>
     </div>
+</div>
 
-    <script>
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            // In a real app, this would also clear the session on the server
-            if(confirm('Apakah Anda yakin ingin logout?')) {
-                // Redirect to login page
-                window.location.href = 'index.html';
-            }
-        });
-    </script>
-</body>
-</html>
+<!-- Password Update Modal -->
+{% include "password_modal.html" %}
+
+<!-- Profile Update Modal -->
+{% include "profile_modal.html" %}
+
+<style>
+    .navbar {
+        background-color: #4CAF50;
+        color: white;
+        padding: 15px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .logout-btn {
+        background-color: #d9534f;
+        color: white;
+        border: none;
+        padding: 8px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        text-decoration: none;
+    }
+    .logout-btn:hover {
+        background-color: #c9302c;
+    }
+    .dashboard-container {
+        max-width: 1000px;
+        margin: 30px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+    .profile-section {
+        margin-bottom: 30px;
+    }
+    .profile-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .profile-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background-color: #4CAF50;
+        margin-right: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 30px;
+        color: white;
+    }
+    .profile-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+    }
+    .detail-card {
+        background-color: #f9f9f9;
+        padding: 15px;
+        border-radius: 6px;
+    }
+    .detail-card h3 {
+        margin-top: 0;
+        color: #4CAF50;
+        font-size: 16px;
+    }
+    .action-buttons {
+        margin-top: 20px;
+        display: flex;
+        gap: 10px;
+    }
+    .btn {
+        padding: 10px 20px;
+        border-radius: 4px;
+        text-decoration: none;
+        font-weight: bold;
+    }
+    .btn-primary {
+        background-color: #4CAF50;
+        color: white;
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        color: white;
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .full-width {
+        grid-column: 1 / -1;
+    }
+
+    .certificate-table,
+    .schedule-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+
+    .certificate-table th,
+    .certificate-table td,
+    .schedule-table th,
+    .schedule-table td {
+        padding: 8px;
+        border: 1px solid #ddd;
+        text-align: left;
+    }
+
+    .certificate-table th,
+    .schedule-table th {
+        background-color: #f5f5f5;
+    }
+    
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    margin: 50px auto;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.certificate-entry,
+.schedule-entry {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+</style>
+
+<script>
+function openPasswordModal() {
+    document.getElementById('passwordModal').style.display = 'block';
+}
+
+function closePasswordModal() {
+    document.getElementById('passwordModal').style.display = 'none';
+}
+
+function openProfileModal() {
+    document.getElementById('profileModal').style.display = 'block';
+}
+
+function closeProfileModal() {
+    document.getElementById('profileModal').style.display = 'none';
+}
+
+function addCertificate() {
+    const container = document.getElementById('certificates');
+    const entry = document.createElement('div');
+    entry.className = 'certificate-entry';
+    entry.innerHTML = `
+        <input type="text" name="cert_number[]" placeholder="Nomor Sertifikat">
+        <input type="text" name="cert_name[]" placeholder="Nama Sertifikat">
+    `;
+    container.appendChild(entry);
+}
+
+function addSchedule() {
+    const container = document.getElementById('schedules');
+    const entry = document.createElement('div');
+    entry.className = 'schedule-entry';
+    entry.innerHTML = `
+        <select name="schedule_day[]">
+            <option value="Senin">Senin</option>
+            <option value="Selasa">Selasa</option>
+            <option value="Rabu">Rabu</option>
+            <option value="Kamis">Kamis</option>
+            <option value="Jumat">Jumat</option>
+            <option value="Sabtu">Sabtu</option>
+        </select>
+        <input type="time" name="schedule_start[]">
+        <input type="time" name="schedule_end[]">
+    `;
+    container.appendChild(entry);
+}
+
+// Close modals when clicking outside
+window.onclick = function(event) {
+    if (event.target == document.getElementById('passwordModal')) {
+        closePasswordModal();
+    }
+    if (event.target == document.getElementById('profileModal')) {
+        closeProfileModal();
+    }
+}
+</script>
+{% endblock %}

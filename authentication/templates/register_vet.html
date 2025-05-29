@@ -61,69 +61,57 @@
     <h1>FORM REGISTER</h1>
     <h2>Dokter Hewan</h2>
     
-    <form>
+    <form method="POST" action="{% url 'register_vet' %}">
+        {% csrf_token %}
         <div class="section">
             <h3>Informasi Umum</h3>
-            
             <div class="form-group">
                 <label for="license" class="required">Nomor izin Praklik</label>
-                <input type="text" id="license" placeholder="Nomor izin Praklik">
+                <input type="text" id="license" name="license" placeholder="Nomor izin Praklik" required>
             </div>
-            
             <div class="form-group">
                 <label for="email" class="required">Email</label>
-                <input type="email" id="email" placeholder="Email">
+                <input type="email" id="email" name="email" placeholder="Email" required>
             </div>
-            
             <div class="form-group">
                 <label for="password" class="required">Password</label>
-                <input type="password" id="password" placeholder="Password">
+                <input type="password" id="password" name="password" placeholder="Password" required>
             </div>
-            
             <div class="form-group">
                 <label for="phone" class="required">Nomor Telepon</label>
-                <input type="tel" id="phone" placeholder="Nomor Telepon">
+                <input type="tel" id="phone" name="phone" placeholder="Nomor Telepon" required>
             </div>
-            
             <div class="form-group">
                 <label for="hire-date" class="required">Tanggal Diterima</label>
-                <input type="date" id="hire-date" placeholder="Tanggal Diterima">
+                <input type="date" id="hire-date" name="hire_date" placeholder="Tanggal Diterima" required>
             </div>
-            
             <div class="form-group">
                 <label for="address" class="required">Alamat</label>
-                <textarea id="address" rows="3" placeholder="Alamat"></textarea>
+                <textarea id="address" name="address" rows="3" placeholder="Alamat" required></textarea>
             </div>
         </div>
-        
         <div class="section">
             <h3>Kompetensi</h3>
-            
             <div class="form-group">
                 <label for="cert-number" class="required">Nomor Sertifikat</label>
-                <input type="text" id="cert-number" placeholder="Nomor Sertifikat">
+                <input type="text" id="cert-number" name="cert_number" placeholder="Nomor Sertifikat" required>
             </div>
-            
             <div class="form-group">
                 <label for="cert-name" class="required">Nama Sertifikat</label>
-                <input type="text" id="cert-name" placeholder="Nama Sertifikat">
+                <input type="text" id="cert-name" name="cert_name" placeholder="Nama Sertifikat" required>
             </div>
         </div>
-        
         <div class="section">
             <h3>Jadwal Praklik</h3>
-            
             <div class="form-group">
                 <label for="day" class="required">Hari</label>
-                <input type="text" id="day" placeholder="Senin">
+                <input type="text" id="day" name="day" placeholder="Senin" required>
             </div>
-            
             <div class="form-group">
                 <label for="time" class="required">Jam</label>
-                <input type="text" id="time" placeholder="Jam">
+                <input type="text" id="time" name="time" placeholder="Jam" required>
             </div>
         </div>
-        
         <button type="submit">Register</button>
     </form>
 </body>

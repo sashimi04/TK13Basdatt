@@ -72,51 +72,84 @@
         .register-link a:hover {
             text-decoration: underline;
         }
+        .alert {
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+        .alert-success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }        
     </style>
 </head>
 <body>
     <div class="login-container">
         <h1>Login</h1>
+
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        {% if error %}
+            <div class="alert alert-error">
+                {{ error }}
+            </div>
+        {% endif %}
         
-        <form id="loginForm">
+        <form id="loginForm" method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" id="email" name="email" required placeholder="Masukkan email Anda">
+                <input type="email" id="email" name="email" required 
+                       placeholder="Masukkan email Anda">
             </div>
             
             <div class="form-group">
                 <label for="password">Password</label>
-                <input type="password" id="password" name="password" required placeholder="Masukkan password Anda">
-                <div id="errorMessage" class="error-message">Email atau password salah. Silakan coba lagi.</div>
+                <input type="password" id="password" name="password" required 
+                       placeholder="Masukkan password Anda">
             </div>
             
             <button type="submit">LOGIN</button>
         </form>
         
         <div class="register-link">
-            Belum punya akun? <a href="register_type.html">Daftar disini</a>
+            Belum punya akun? <a href="{% url 'register_type' %}">Daftar disini</a>
         </div>
     </div>
 
     <script>
-        // This would be replaced with actual validation logic in a real implementation
+        // Only handle client-side validation
         document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Simulate error for demonstration
-            // In a real app, this would be server-side validation
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
             
-            if(email === '' || password === '') {
-                document.getElementById('errorMessage').style.display = 'block';
-                document.getElementById('errorMessage').textContent = 'Email dan password harus diisi';
-            } else {
-                // For demo purposes, we'll assume login is successful
-                // In real app, this would redirect to dashboard after successful validation
-                document.getElementById('errorMessage').style.display = 'none';
-                alert('Login berhasil! Akan diarahkan ke dashboard.');
-                window.location.href = 'dashboard.html';
+            if (!email || !password) {
+                e.preventDefault();
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'alert alert-error';
+                errorDiv.textContent = 'Email dan password harus diisi';
+                
+                // Remove any existing error messages
+                const existingError = document.querySelector('.alert-error');
+                if (existingError) {
+                    existingError.remove();
+                }
+                
+                // Insert error message after h1
+                const h1 = document.querySelector('h1');
+                h1.parentNode.insertBefore(errorDiv, h1.nextSibling);
             }
         });
     </script>

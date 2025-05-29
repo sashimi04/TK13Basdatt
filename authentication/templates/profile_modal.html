@@ -1,0 +1,54 @@
+<div id="profileModal" class="modal">
+    <div class="modal-content">
+        <h2>Update Profile</h2>
+        <form method="POST" action="{% url 'update_profile' %}">
+            {% csrf_token %}
+            
+            {% if profile.user_type == 'individual' %}
+                <input type="text" name="first_name" value="{{ profile.first_name }}" required>
+                <input type="text" name="middle_name" value="{{ profile.middle_name }}">
+                <input type="text" name="last_name" value="{{ profile.last_name }}" required>
+                <input type="text" name="phone" value="{{ profile.phone }}" required>
+                <input type="text" name="address" value="{{ profile.address }}" required>
+                <button type="submit">Update</button>
+            {% endif %}
+
+            {% if profile.user_type == 'company' %}
+                <div class="form-group">
+                    <label>Nama Perusahaan *</label>
+                    <input type="text" name="company_name" value="{{ profile.company_name }}" required>
+                </div>
+            {% endif %}
+
+            <div class="form-group">
+                <label>Alamat *</label>
+                <input type="text" name="address" value="{{ profile.address }}" required>
+            </div>
+
+            <div class="form-group">
+                <label>Nomor Telepon *</label>
+                <input type="text" name="phone" value="{{ profile.phone }}" required>
+            </div>
+
+            {% if profile.user_type in 'veterinarian,nurse,frontdesk' %}
+                <div class="form-group">
+                    <label>Tanggal Akhir Kerja</label>
+                    <input type="date" name="end_date" value="{{ profile.end_date }}">
+                </div>
+            {% endif %}
+
+            {% if profile.user_type in 'veterinarian,nurse' %}
+                {% include "certificate_form.html" %}
+            {% endif %}
+
+            {% if profile.user_type == 'veterinarian' %}
+                {% include "schedule_form.html" %}
+            {% endif %}
+
+            <div class="modal-buttons">
+                <button type="button" onclick="closeProfileModal()" class="btn btn-secondary">Cancel</button>
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </div>
+        </form>
+    </div>
+</div>
