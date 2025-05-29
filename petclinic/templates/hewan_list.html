@@ -1,137 +1,455 @@
 <!-- path=petclinic/templates/hewan_list.html -->
 {% extends 'base.html' %}
+
 {% block content %}
-<div x-data="{ 
-    showPetForm: false, 
-    showDeleteModal: false,
-    isEditPet: false, 
-    petForm: { 
-        id: '', 
-        pemilik: '', 
-        jenis: '', 
-        nama: '', 
-        tanggal_lahir: '', 
-        foto: '' 
-    },
-    petToDelete: null,
-    startEditPet(hewan) {
-        this.isEditPet = true;
-        this.petForm = {
-            id: hewan.id,
-            pemilik: hewan.pemilik_id,
-            jenis: hewan.jenis_id,
-            nama: hewan.nama,
-            tanggal_lahir: hewan.tanggal_lahir,
-            foto: hewan.foto
-        };
-        this.showPetForm = true;
-    },
-    prepareDeletePet(hewan) {
-        this.petToDelete = hewan;
-        this.showDeleteModal = true;
-    },
-    confirmDeletePet() {
-        if (this.petToDelete) {
-            fetch(`/api/hewan/?id=${this.petToDelete.id}`, {
-                method: 'DELETE',
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === 'Deleted successfully') {
-                    window.location.reload();
-                }
-            });
-            this.showDeleteModal = false;
-        }
-    }
-}" class="p-8 bg-white rounded-xl shadow">
-    <h1 class="text-4xl font-bold mb-6">Daftar Hewan Peliharaan</h1>
-    <div class="flex justify-end mb-6">
-        <button @click="showPetForm=true; isEditPet=false; petForm={ pemilik: '', jenis: '', nama: '', tanggal_lahir: '', foto: '' }" class="btn-create bg-slate-900 text-white px-4 py-2 rounded-lg shadow hover:bg-slate-800 transition duration-200 flex items-center space-x-2">
-            <span class="material-icons">add</span> <span>+ Create New Pet</span>
+<div class="container mx-auto px-4 py-8" x-data="hewanList()">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-2xl font-bold">Daftar Hewan Peliharaan</h1>
+        {% if user_role == 'FrontDeskOfficer' or user_role == 'Klien' %}
+        <button @click="openModal()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+            Tambah Hewan
         </button>
+        {% endif %}
     </div>
-    <div class="overflow-x-auto rounded-lg shadow">
-        <table class="min-w-full divide-y divide-gray-200">
+
+    <!-- Search and Filter -->
+    <div class="mb-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <input type="text" x-model="search" placeholder="Cari hewan..." 
+               class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+        <select x-model="selectedJenis" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500">
+            <option value="">Semua Jenis</option>
+            <template x-for="jenis in jenisList" :key="jenis.id">
+                <option :value="jenis.id" x-text="jenis.nama_jenis"></option>
+            </template>
+        </select>
+    </div>
+
+    <!-- Table -->
+    <div class="bg-white shadow-md rounded-lg overflow-hidden">
+        <table class="min-w-full">
             <thead class="bg-gray-100">
                 <tr>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">No</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Pemilik</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Jenis Hewan</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Nama Hewan</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Tanggal Lahir</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Foto</th>
-                    <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Action</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foto</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pemilik</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis</th>
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal Lahir</th>
+                    {% if user_role == 'FrontDeskOfficer' or user_role == 'Klien' %}
+                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-                {% for hewan in hewan_list %}
-                <tr>
-                    <td class="px-6 py-4">{{ forloop.counter }}</td>
-                    <td class="px-6 py-4">{{ hewan.pemilik }}</td>
-                    <td class="px-6 py-4">{{ hewan.jenis }}</td>
-                    <td class="px-6 py-4">{{ hewan.nama }}</td>
-                    <td class="px-6 py-4">{{ hewan.tanggal_lahir|date:"Y-m-d" }}</td>
-                    <td class="px-6 py-4"><img src="{{ hewan.foto }}" class="w-16 h-16 rounded-lg object-cover"></td>
-                    <td class="px-6 py-4 flex space-x-2">
-                        <button @click="startEditPet({
-                            id: '{{ hewan.id }}',
-                            pemilik_id: '{{ hewan.pemilik.id }}',
-                            jenis_id: '{{ hewan.jenis.id }}',
-                            nama: '{{ hewan.nama }}',
-                            tanggal_lahir: '{{ hewan.tanggal_lahir|date:"Y-m-d" }}',
-                            foto: '{{ hewan.foto }}'
-                        })" class="btn-update bg-blue-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-blue-500 transition duration-200">Update</button>
-                        <button @click="prepareDeletePet({
-                            id: '{{ hewan.id }}',
-                            nama: '{{ hewan.nama }}',
-                            pemilik: '{{ hewan.pemilik }}'
-                        })" class="btn-delete bg-red-500 text-white px-3 py-1 rounded-lg text-sm hover:bg-red-400 transition duration-200">Delete</button>
-                    </td>
-                </tr>
-                {% endfor %}
+                <template x-for="hewan in filteredHewan" :key="hewan.nama + '-' + hewan.no_identitas_klien">
+                    <tr>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <img :src="hewan.url_foto || '/static/images/default-pet.jpg'" 
+                                 :alt="hewan.nama"
+                                 class="h-12 w-12 rounded-full object-cover">
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap" x-text="hewan.nama"></td>
+                        <td class="px-6 py-4 whitespace-nowrap" x-text="hewan.pemilik"></td>
+                        <td class="px-6 py-4 whitespace-nowrap" x-text="hewan.jenis"></td>
+                        <td class="px-6 py-4 whitespace-nowrap" x-text="formatDate(hewan.tanggal_lahir)"></td>
+                        {% if user_role == 'FrontDeskOfficer' or user_role == 'Klien' %}
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <button @click="editHewan(hewan)" class="text-blue-600 hover:text-blue-900 mr-3">Edit</button>
+                            <button x-show="userType === 'FrontDeskOfficer' && !hewan.ada_kunjungan_aktif" @click="deleteHewan(hewan)" class="text-red-600 hover:text-red-900">Hapus</button>
+                        </td>
+                        {% endif %}
+                    </tr>
+                </template>
             </tbody>
         </table>
     </div>
 
-    <!-- Modal Create/Update Pet -->
-    <div x-show="showPetForm" @click.away="showPetForm = false" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style="display: none;" x-bind:style="{ display: showPetForm ? 'flex' : 'none' }">
-        <div class="bg-white rounded-xl shadow-xl w-[28rem] p-8">
-            <h2 class="text-2xl font-bold mb-4" x-text="isEditPet ? 'Update Pet' : 'Create New Pet'"></h2>
-            <form @submit.prevent="isEditPet ? updatePet() : createPet(); showPetForm = false; window.location.reload();">
-                <select x-model="petForm.pemilik" :disabled="userType === 'Klien'" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Pilih Pemilik</option>
-                    {% for pemilik in pemilik_list %}
-                    <option value="{{ pemilik.id }}">{{ pemilik.nama }}</option>
-                    {% endfor %}
-                </select>
-                <select x-model="petForm.jenis" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:ring-2 focus:ring-indigo-500">
-                    <option value="">Pilih Jenis Hewan</option>
-                    {% for jenis in jenis_hewan_list %}
-                    <option value="{{ jenis.id }}">{{ jenis.nama }}</option>
-                    {% endfor %}
-                </select>
-                <input type="text" placeholder="Nama Hewan" x-model="petForm.nama" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:ring-2 focus:ring-indigo-500" required>
-                <input type="date" x-model="petForm.tanggal_lahir" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:ring-2 focus:ring-indigo-500" required>
-                <input type="url" placeholder="URL Foto" x-model="petForm.foto" class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4 focus:ring-2 focus:ring-indigo-500" required>
-                <div class="flex justify-between">
-                    <button type="button" @click="showPetForm = false" class="border border-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-100 transition duration-200">Cancel</button>
-                    <button type="submit" class="bg-slate-900 text-white rounded-lg px-5 py-2 hover:bg-slate-800 transition duration-200">Save</button>
-                </div>
-            </form>
+    <!-- Modal -->
+    <div x-show="showModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full" style="display: none;">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3">
+                <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" x-text="modalTitle"></h3>
+                <form @submit.prevent="saveHewan">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="nama">
+                            Nama Hewan
+                        </label>
+                        <input type="text" id="nama" x-model="formData.nama"
+                               :disabled="formData.has_any_visit"
+                               :class="{'cursor-not-allowed bg-gray-200': formData.has_any_visit, 'shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline': !formData.has_any_visit}"
+                               required>
+                        <p x-show="formData.has_any_visit" class="text-xs text-gray-500 mt-1">Tidak dapat mengubah nama hewan karena sudah memiliki riwayat kunjungan.</p>
+                    </div>
+
+                    {% if user_role == 'FrontDeskOfficer' %}
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="no_identitas_klien">
+                            Pemilik
+                        </label>
+                        <select id="no_identitas_klien" x-model="formData.no_identitas_klien"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required>
+                            <option value="">Pilih Pemilik</option>
+                            <template x-for="klien in klienList" :key="klien.no_identitas_klien">
+                                <option :value="klien.no_identitas_klien" x-text="klien.nama"></option>
+                            </template>
+                        </select>
+                        <p x-show="formData.has_any_visit" class="text-xs text-gray-500 mt-1">Tidak dapat mengubah pemilik hewan karena sudah memiliki riwayat kunjungan.</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="id_jenis">
+                            Jenis Hewan
+                        </label>
+                        <select id="id_jenis" x-model="formData.id_jenis"
+                                class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                                required>
+                            <option value="">Pilih Jenis</option>
+                            <template x-for="jenis in jenisList" :key="jenis.id">
+                                <option :value="jenis.id" x-text="jenis.nama_jenis"></option>
+                            </template>
+                        </select>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="tanggal_lahir">
+                            Tanggal Lahir
+                        </label>
+                        <input type="date" id="tanggal_lahir" x-model="formData.tanggal_lahir"
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                               required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-gray-700 text-sm font-bold mb-2" for="url_foto">
+                            URL Foto
+                        </label>
+                        <input type="url" id="url_foto" x-model="formData.url_foto"
+                               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                               placeholder="https://example.com/photo.jpg">
+                    </div>
+
+                    <div class="flex justify-end space-x-3">
+                        <button type="button" @click="closeModal"
+                                class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded">
+                            Batal
+                        </button>
+                        <button type="submit"
+                                class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                            Simpan
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 
-    <!-- Modal Konfirmasi Delete Pet -->
-    <div x-show="showDeleteModal" @click.away="showDeleteModal = false" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center" style="display: none;" x-bind:style="{ display: showDeleteModal ? 'flex' : 'none' }">
-        <div class="bg-white rounded-xl shadow-xl w-[28rem] p-8">
-            <h2 class="text-2xl font-bold text-red-600 mb-4">Delete Pet</h2>
-            <p class="mb-6">Apakah kamu yakin ingin menghapus <span x-text="petToDelete?.nama" class="font-semibold"></span> milik <span x-text="petToDelete?.pemilik" class="font-semibold"></span>?</p>
-            <div class="flex justify-end space-x-3">
-                <button @click="showDeleteModal = false" class="border border-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-100 transition duration-200">Cancel</button>
-                <button @click="confirmDeletePet()" class="bg-red-500 hover:bg-red-400 text-white rounded-lg px-5 py-2">Confirm Deletion</button>
+    <!-- Delete Confirmation Modal -->
+    <div x-show="showDeleteModal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" style="display: none;">
+        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Delete Pet</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">
+                        Apakah kamu yakin untuk menghapus Hewan Peliharaan 
+                        <span class="font-bold text-red-600" x-text="hewanToDelete ? hewanToDelete.nama : '';"></span> milik 
+                        <span class="font-bold text-red-600" x-text="hewanToDelete ? hewanToDelete.pemilik : '';"></span>?
+                    </p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="confirm-delete-btn" @click="confirmDeleteAction()" class="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        Confirm Deletion
+                    </button>
+                    <button id="cancel-delete-btn" @click="closeDeleteModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        Cancel
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('hewanList', () => ({
+        hewanList: [],
+        jenisList: [],
+        klienList: [],
+        search: '',
+        selectedJenis: '',
+        showModal: false,
+        modalTitle: 'Tambah Hewan',
+        formData: {
+            nama: '',
+            no_identitas_klien: '',
+            id_jenis: '',
+            tanggal_lahir: '',
+            url_foto: '',
+            jenis: '',
+            ada_kunjungan_aktif: false,
+            has_any_visit: false
+        },
+        originalNama: '',
+        originalOwner: '',
+        isEditing: false,
+        showDeleteModal: false,
+        hewanToDelete: null,
+
+        init() {
+            this.fetchHewan();
+            this.fetchJenis();
+            console.log('Current user role in Alpine:', this.userType);
+            console.log('Initial fetch - jenisList:', this.jenisList);
+            if (this.userType === 'FrontDeskOfficer') {
+                this.fetchKlien();
+            }
+        },
+
+        get filteredHewan() {
+            return this.hewanList.filter(hewan => {
+                const matchesSearch = hewan.nama.toLowerCase().includes(this.search.toLowerCase()) ||
+                                    (hewan.pemilik && hewan.pemilik.toLowerCase().includes(this.search.toLowerCase()));
+                const matchesJenis = !this.selectedJenis || String(hewan.id_jenis) === String(this.selectedJenis);
+                return matchesSearch && matchesJenis;
+            });
+        },
+
+        async fetchHewan() {
+            try {
+                const response = await fetch('/api/hewan/');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                this.hewanList = data;
+            } catch (error) {
+                console.error('Error fetching hewan:', error);
+                if (window.dispatchEvent) {
+                     window.dispatchEvent(new CustomEvent('show-error', { detail: { message: 'Gagal mengambil data hewan: ' + error.message } }));
+                } else {
+                    alert('Gagal mengambil data hewan: ' + error.message);
+                }
+            }
+        },
+
+        async fetchJenis() {
+            try {
+                const response = await fetch('/api/jenis-hewan/');
+                 if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                this.jenisList = data;
+                console.log('Fetched and set jenisList:', this.jenisList);
+            } catch (error) {
+                console.error('Error fetching jenis hewan:', error);
+                 if (window.dispatchEvent) {
+                     window.dispatchEvent(new CustomEvent('show-error', { detail: { message: 'Gagal mengambil data jenis hewan: ' + error.message } }));
+                } else {
+                    alert('Gagal mengambil data jenis hewan: ' + error.message);
+                }
+            }
+        },
+
+        async fetchKlien() {
+            try {
+                const response = await fetch('/api/klien/');
+                 if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                console.log('Fetched Klien data:', data);
+                this.klienList = data.map(k => ({ no_identitas_klien: k.no_identitas, nama: k.nama }));
+                console.log('Processed klienList for dropdown:', this.klienList);
+            } catch (error) {
+                console.error('Error fetching klien:', error);
+                 if (window.dispatchEvent) {
+                     window.dispatchEvent(new CustomEvent('show-error', { detail: { message: 'Gagal mengambil data klien: ' + error.message } }));
+                } else {
+                    alert('Gagal mengambil data klien: ' + error.message);
+                }
+            }
+        },
+
+        openModal(hewan = null) {
+            console.log('Opening modal for hewan:', hewan);
+            this.isEditing = !!hewan;
+            this.modalTitle = this.isEditing ? 'Edit Hewan' : 'Tambah Hewan';
+            if (hewan) {
+                this.formData = {
+                    nama: hewan.nama,
+                    no_identitas_klien: hewan.no_identitas_klien,
+                    id_jenis: hewan.id_jenis,
+                    tanggal_lahir: hewan.tanggal_lahir,
+                    url_foto: hewan.url_foto,
+                    jenis: hewan.jenis,
+                    ada_kunjungan_aktif: hewan.ada_kunjungan_aktif,
+                    has_any_visit: hewan.has_any_visit
+                };
+                this.originalNama = hewan.nama;
+                this.originalOwner = hewan.no_identitas_klien;
+                console.log('Editing hewan, formData:', this.formData);
+                console.log('Jenis list available for dropdown:', this.jenisList);
+            } else {
+                 this.formData = {
+                    nama: '',
+                    no_identitas_klien: '',
+                    id_jenis: '',
+                    tanggal_lahir: '',
+                    url_foto: '',
+                    jenis: '',
+                    ada_kunjungan_aktif: false,
+                    has_any_visit: false
+                };
+                 this.originalNama = '';
+                 this.originalOwner = '';
+            }
+            this.showModal = true;
+        },
+
+        closeModal() {
+            this.showModal = false;
+            this.formData = {
+                nama: '',
+                no_identitas_klien: '',
+                id_jenis: '',
+                tanggal_lahir: '',
+                url_foto: '',
+                jenis: '',
+                ada_kunjungan_aktif: false,
+                has_any_visit: false
+            };
+             this.originalNama = '';
+             this.originalOwner = '';
+            this.isEditing = false;
+        },
+
+        async saveHewan() {
+            try {
+                const url = '/api/hewan/';
+                const method = this.isEditing ? 'PUT' : 'POST';
+                
+                const payload = this.isEditing ? {
+                    original_nama: this.originalNama,
+                    original_no_identitas_klien: this.originalOwner,
+                    ...this.formData
+                } : this.formData;
+
+                const response = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': this.getCookie('csrftoken')
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const responseData = await response.json();
+                if (!response.ok) {
+                     if (window.dispatchEvent) {
+                         window.dispatchEvent(new CustomEvent('show-error', { detail: { message: responseData.error || 'Gagal menyimpan hewan' } }));
+                     } else {
+                        alert(responseData.error || 'Gagal menyimpan hewan');
+                     }
+                } else {
+                     if (window.dispatchEvent) {
+                         window.dispatchEvent(new CustomEvent('show-success', { detail: { message: responseData.message || (this.isEditing ? 'Hewan berhasil diperbarui' : 'Hewan berhasil ditambahkan') } }));
+                     } else {
+                         alert(responseData.message || (this.isEditing ? 'Hewan berhasil diperbarui' : 'Hewan berhasil ditambahkan'));
+                     }
+                    this.fetchHewan();
+                    this.closeModal();
+                }
+
+            } catch (error) {
+                console.error('Error saving hewan:', error);
+                 if (window.dispatchEvent) {
+                     window.dispatchEvent(new CustomEvent('show-error', { detail: { message: 'Terjadi kesalahan: ' + error.message } }));
+                 } else {
+                    alert('Terjadi kesalahan: ' + error.message);
+                 }
+            }
+        },
+
+        editHewan(hewan) {
+            console.log('Edit button clicked for hewan:', hewan);
+            this.openModal(hewan);
+        },
+
+        deleteHewan(hewan) {
+            // Store hewan data and show the confirmation modal
+            console.log('Delete button clicked for hewan:', hewan);
+            this.hewanToDelete = hewan;
+            this.showDeleteModal = true;
+        },
+
+        async confirmDeleteAction() {
+            if (!this.hewanToDelete) return;
+
+            try {
+                const response = await fetch(`/api/hewan/?nama=${encodeURIComponent(this.hewanToDelete.nama)}&no_identitas_klien=${encodeURIComponent(this.hewanToDelete.no_identitas_klien)}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRFToken': this.getCookie('csrftoken')
+                    }
+                });
+
+                const responseData = await response.json();
+
+                if (!response.ok) {
+                    if (window.dispatchEvent) {
+                         window.dispatchEvent(new CustomEvent('show-error', { detail: { message: responseData.error || 'Gagal menghapus hewan' } }));
+                    } else {
+                         alert(responseData.error || 'Gagal menghapus hewan');
+                    }
+                } else {
+                    if (window.dispatchEvent) {
+                        window.dispatchEvent(new CustomEvent('show-success', { detail: { message: responseData.message || 'Hewan berhasil dihapus' } }));
+                    } else {
+                        alert(responseData.message || 'Hewan berhasil dihapus');
+                    }
+                    this.fetchHewan(); // Refresh list
+                }
+
+            } catch (error) {
+                console.error('Error deleting hewan:', error);
+                if (window.dispatchEvent) {
+                    window.dispatchEvent(new CustomEvent('show-error', { detail: { message: 'Terjadi kesalahan: ' + error.message } }));
+                } else {
+                    alert('Terjadi kesalahan: ' + error.message);
+                }
+            } finally {
+                 this.closeDeleteModal();
+            }
+        },
+
+        closeDeleteModal() {
+            this.showDeleteModal = false;
+            this.hewanToDelete = null;
+        },
+
+        formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            return date.toLocaleDateString('id-ID', options);
+        },
+
+        getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+    }));
+});
+</script>
 {% endblock %}
