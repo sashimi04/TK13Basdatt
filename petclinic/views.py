@@ -83,12 +83,12 @@ def dashboard(request):
 def hewan_list(request):
     # Check role access
     check_role_access(request, ['FrontDeskOfficer', 'Klien', 'Guest'])
-
+    
     user_role = get_user_role(request)
     no_identitas_klien = request.session.get('no_identitas_klien')
     print(f"Debug - User Role: {user_role}")  # Debug print
     print(f"Debug - No Identitas Klien: {no_identitas_klien}")  # Debug print
-
+    
     # Fetch hewan list using raw SQL
     with connection.cursor() as cursor:
         sql_query = """
@@ -183,7 +183,7 @@ def hewan_list(request):
             for row in klien_rows:
                 klien_list_data.append({'no_identitas': row[0], 'nama': row[1]})
         print(f"Debug - Fetched Klien List (Raw SQL): {klien_list_data}") # Debug print
-
+    
     context = {
         'hewan_list': hewan_list_data,
         'jenis_hewan_list': jenis_hewan_list_data,
@@ -195,7 +195,7 @@ def hewan_list(request):
 def jenis_hewan_list(request):
     # Check role access
     check_role_access(request, ['FrontDeskOfficer', 'DokterHewan', 'Guest'])
-
+    
     # Fetch jenis hewan list using raw SQL
     jenis_list_data = []
     with connection.cursor() as cursor:
@@ -288,7 +288,7 @@ def api_hewan(request):
                     data.append(hewan_data)
 
             return JsonResponse(data, safe=False)
-
+        
         elif request.method == 'POST':
             # Allow FrontDeskOfficer and Klien to create animals
             check_role_access(request, ['FrontDeskOfficer', 'Klien'])
@@ -336,7 +336,7 @@ def api_hewan(request):
             except Exception as e:
                 print(f"Unexpected error during hewan POST: {str(e)}")
                 return JsonResponse({'error': 'An unexpected server error occurred during creation: ' + str(e)}, status=500)
-
+        
         elif request.method == 'PUT':
             # Allow FrontDeskOfficer and Klien to update animals
             check_role_access(request, ['FrontDeskOfficer', 'Klien'])
@@ -421,7 +421,7 @@ def api_hewan(request):
             except Exception as e:
                 print(f"Unexpected error during hewan PUT: {str(e)}")
                 return JsonResponse({'error': 'An unexpected server error occurred during update: ' + str(e)}, status=500)
-
+        
         elif request.method == 'DELETE':
             # Check role access
             check_role_access(request, ['FrontDeskOfficer', 'Klien'])
