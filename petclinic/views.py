@@ -9,6 +9,8 @@ from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 import uuid
 from django.db import connection
+from django.contrib.auth.hashers import make_password, check_password
+from django.contrib import messages
 
 def get_user_role(request):
     """Helper function to get user role from session"""
@@ -48,6 +50,52 @@ def get_owner_name(klien_id):
             return row[0]
 
     return "Unknown Owner"
+
+def get_user_specific_type(email):
+    """Helper function to get specific user type - FIXED VERSION"""
+    with connection.cursor() as cursor:
+        # Check if user is in klien table (individual or company)
+        cursor.execute("""
+            SELECT no_identitas FROM klien WHERE email = %s
+        """, [email])
+        klien_data = cursor.fetchone()
+        
+        if klien_data:
+            klien_id = klien_data[0]
+            # Check if individual
+            cursor.execute("""
+                SELECT 1 FROM individu WHERE no_identitas_klien = %s
+            """, [klien_id])
+            if cursor.fetchone():
+                return 'individual'
+            
+            # Check if company
+            cursor.execute("""
+                SELECT 1 FROM perusahaan WHERE no_identitas_klien = %s
+            """, [klien_id])
+            if cursor.fetchone():
+                return 'company'
+        
+        # Check if user is an employee (simplified queries)
+        cursor.execute("""
+            SELECT 1 FROM dokter_hewan WHERE email_user = %s
+        """, [email])
+        if cursor.fetchone():
+            return 'veterinarian'
+        
+        cursor.execute("""
+            SELECT 1 FROM perawat WHERE email_user = %s
+        """, [email])
+        if cursor.fetchone():
+            return 'nurse'
+        
+        cursor.execute("""
+            SELECT 1 FROM front_desk WHERE email_user = %s
+        """, [email])
+        if cursor.fetchone():
+            return 'frontdesk'
+    
+    return 'user'
 
 def dashboard(request):
     # Temporarily set user role to FrontDeskOfficer for testing
@@ -597,10 +645,295 @@ def api_klien(request):
 
             return JsonResponse(data, safe=False)
 
-        # Jika ada kebutuhan POST, PUT, DELETE untuk Klien via API ini, tambahkan di sini
-        # Namun, fungsi ini primernya untuk mengembalikan daftar klien untuk dropdown
-
     except PermissionDenied as e:
-         return JsonResponse({'error': str(e)}, status=403)
+        return JsonResponse({'error': str(e)}, status=403)
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
+
+def update_profile(request):
+   """Update user profile"""
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   
+   email = request.session['user_email']
+   user_type = request.session.get('specific_user_type', 'user')
+   
+   if request.method == 'GET':
+       with connection.cursor() as cursor:
+           cursor.execute("""
+               SELECT email, alamat, nomor_telepon 
+               FROM users 
+               WHERE email = %s
+           """, [email])
+           user_data = cursor.fetchone()
+           
+           profile_data = {
+               'email': user_data[0],
+               'address': user_data[1],
+               'phone': user_data[2],
+               'user_type': user_type,
+               'name': 'User',
+               'first_name': '',
+               'middle_name': '',
+               'last_name': '',
+               'company_name': '',
+               'end_date': ''
+           }
+           
+           if user_type == 'individual':
+               cursor.execute("""
+                   SELECT i.nama_depan, i.nama_tengah, i.nama_belakang
+                   FROM individu i
+                   JOIN klien k ON i.no_identitas_klien = k.no_identitas
+                   WHERE k.email = %s
+               """, [email])
+               individual_data = cursor.fetchone()
+               if individual_data:
+                   profile_data['first_name'] = individual_data[0]
+                   profile_data['middle_name'] = individual_data[1] or ''
+                   profile_data['last_name'] = individual_data[2]
+           
+           elif user_type == 'company':
+               cursor.execute("""
+                   SELECT p.nama_perusahaan
+                   FROM perusahaan p
+                   JOIN klien k ON p.no_identitas_klien = k.no_identitas
+                   WHERE k.email = %s
+               """, [email])
+               company_data = cursor.fetchone()
+               if company_data:
+                   profile_data['company_name'] = company_data[0]
+           
+           elif user_type in ['veterinarian', 'nurse', 'frontdesk']:
+               cursor.execute("""
+                   SELECT tanggal_akhir_kerja
+                   FROM pegawai
+                   WHERE email_user = %s
+               """, [email])
+               employee_data = cursor.fetchone()
+               if employee_data and employee_data[0]:
+                   profile_data['end_date'] = employee_data[0]
+       
+       return render(request, 'update_profile.html', {'profile': profile_data})
+   
+   elif request.method == 'POST':
+       try:
+           with connection.cursor() as cursor:
+               cursor.execute("""
+                   UPDATE users 
+                   SET alamat = %s, nomor_telepon = %s 
+                   WHERE email = %s
+               """, [
+                   request.POST.get('address'),
+                   request.POST.get('phone'),
+                   email
+               ])
+               
+               if user_type == 'individual':
+                   cursor.execute("""
+                       UPDATE individu 
+                       SET nama_depan = %s, nama_tengah = %s, nama_belakang = %s
+                       WHERE no_identitas_klien = (
+                           SELECT no_identitas FROM klien WHERE email = %s
+                       )
+                   """, [
+                       request.POST.get('first_name'),
+                       request.POST.get('middle_name', ''),
+                       request.POST.get('last_name'),
+                       email
+                   ])
+                   
+               elif user_type == 'company':
+                   cursor.execute("""
+                       UPDATE perusahaan 
+                       SET nama_perusahaan = %s
+                       WHERE no_identitas_klien = (
+                           SELECT no_identitas FROM klien WHERE email = %s
+                       )
+                   """, [
+                       request.POST.get('company_name'),
+                       email
+                   ])
+                   
+               elif user_type in ['frontdesk', 'veterinarian', 'nurse']:
+                   end_date = request.POST.get('end_date')
+                   if end_date:
+                       cursor.execute("""
+                           UPDATE pegawai 
+                           SET tanggal_akhir_kerja = %s
+                           WHERE email_user = %s
+                       """, [end_date, email])
+           
+           messages.success(request, 'Profile berhasil diperbarui!')
+           return redirect('/')
+           
+       except Exception as e:
+           messages.error(request, f'Gagal memperbarui profile: {str(e)}')
+           return redirect('/update-profile/')
+
+def update_password(request):
+   """Update user password"""
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   
+   if request.method == 'GET':
+       return render(request, 'update_password.html')
+   
+   elif request.method == 'POST':
+       email = request.session['user_email']
+       current_password = request.POST.get('current_password')
+       new_password = request.POST.get('new_password')
+       confirm_password = request.POST.get('confirm_password')
+       
+       if new_password != confirm_password:
+           messages.error(request, 'Password baru dan konfirmasi tidak cocok!')
+           return render(request, 'update_password.html')
+       
+       if len(new_password) < 8:
+           messages.error(request, 'Password harus minimal 8 karakter!')
+           return render(request, 'update_password.html')
+       
+       try:
+           with connection.cursor() as cursor:
+               cursor.execute("""
+                   SELECT password FROM users WHERE email = %s
+               """, [email])
+               user_data = cursor.fetchone()
+               
+               if not user_data:
+                   messages.error(request, 'User tidak ditemukan!')
+                   return render(request, 'update_password.html')
+               
+               password_check_hashed = check_password(current_password, user_data[0])
+               password_check_plain = (current_password == user_data[0])
+               
+               if not (password_check_hashed or password_check_plain):
+                   messages.error(request, 'Password lama tidak benar!')
+                   return render(request, 'update_password.html')
+               
+               hashed_password = make_password(new_password)
+               cursor.execute("""
+                   UPDATE users 
+                   SET password = %s 
+                   WHERE email = %s
+               """, [hashed_password, email])
+           
+           messages.success(request, 'Password berhasil diperbarui!')
+           return redirect('/')
+           
+       except Exception as e:
+           messages.error(request, f'Gagal memperbarui password: {str(e)}')
+           return render(request, 'update_password.html')
+
+def login_view(request):
+   if request.method == 'GET':
+       return render(request, 'login.html')
+   elif request.method == 'POST':
+       email = request.POST.get('email', '').strip()
+       password = request.POST.get('password', '').strip()
+       
+       if not email or not password:
+           return render(request, 'login.html', {'error': 'Email dan password harus diisi'})
+       
+       with connection.cursor() as cursor:
+           cursor.execute("SELECT email, password FROM users WHERE email = %s", [email])
+           user_data = cursor.fetchone()
+           
+           if user_data and (check_password(password, user_data[1]) or password == user_data[1]):
+               request.session['user_email'] = email
+               user_type = get_user_specific_type(email)
+               request.session['specific_user_type'] = user_type
+               return redirect('/')
+       
+       return render(request, 'login.html', {'error': 'Email atau password salah'})
+
+def logout_view(request):
+   request.session.flush()
+   return redirect('/')
+
+def register_type(request):
+   return render(request, 'register_type.html')
+
+def register_individual(request):
+   return render(request, 'register_individual.html')
+
+def register_company(request):
+   return render(request, 'register_company.html')
+
+def register_veterinarian(request):
+   return render(request, 'register_vet.html')
+
+def register_nurse(request):
+   return render(request, 'register_nurse.html')
+
+def register_frontdesk(request):
+   return render(request, 'register_frontdesk.html')
+
+# Klien Views
+def kelola_hewan(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'hewan_peliharaan.html')
+
+def daftar_kunjungan(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'list_list_vaccination.html')
+
+def daftar_vaksinasi(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'list_list_vaccine.html')
+
+# Front Desk Views
+def kelola_jenis_hewan(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'jenis_hewan_list.html')
+
+def kelola_kunjungan(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'list_client.html')
+
+def daftar_klien(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'list_client.html')
+
+# Dokter Hewan Views
+def daftar_jenis_hewan(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'jenis_hewan.html')
+
+def perawatan_hewan(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'hewan_list.html')
+
+def manajemen_obat(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'hewan_list.html')
+
+def manajemen_perawatan(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'hewan_list.html')
+
+def pemberian_obat(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'hewan_list.html')
+
+def manajemen_vaksinasi(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'create_list_vaccination.html')
+
+# Perawat Views
+def manajemen_vaksin(request):
+   if 'user_email' not in request.session:
+       return redirect('/login/')
+   return render(request, 'create_list_vaccine.html')

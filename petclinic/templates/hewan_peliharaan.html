@@ -1,54 +1,235 @@
-<!-- path=petclinic/templates/hewan_list.html -->
-{% extends 'base.html' %}
-{% block content %}
-<div class="p-8">
-    <h1 class="text-4xl font-bold mb-6">Daftar Hewan Peliharaan</h1>
-    <button @click="showCreateModal = true" class="bg-slate-900 hover:bg-slate-800 text-white rounded-lg px-4 py-2">
-        <span class="material-icons">add</span> Tambah Hewan Peliharaan
-    </button>
-    <table class="min-w-full divide-y divide-gray-200 mt-4">
-        <thead class="bg-gray-100">
-            <tr>
-                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">No</th>
-                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Pemilik</th>
-                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Jenis Hewan</th>
-                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Nama</th>
-                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Tanggal Lahir</th>
-                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Foto</th>
-                <th class="px-6 py-4 text-left text-sm font-medium text-gray-500">Action</th>
-            </tr>
-        </thead>
-        <tbody class="bg-white divide-y divide-gray-200">
-            <!-- Loop through hewan_list -->
-            {% for hewan in hewan_list %}
-            <tr>
-                <td class="px-6 py-4">{{ forloop.counter }}</td>
-                <td class="px-6 py-4">{{ hewan.pemilik }}</td>
-                <td class="px-6 py-4">{{ hewan.jenis }}</td>
-                <td class="px-6 py-4">{{ hewan.nama }}</td>
-                <td class="px-6 py-4">{{ hewan.tanggal_lahir|date:"j F Y" }}</td>
-                <td class="px-6 py-4"><img src="{{ hewan.foto }}" class="w-12 h-12 rounded object-cover"></td>
-                <td class="px-6 py-4">
-                    <button @click="showUpdateModal = true" class="bg-blue-600 text-white rounded-lg px-2 py-1">Update</button>
-                    <button @click="confirmDelete(hewan.id)" class="bg-red-500 text-white rounded-lg px-2 py-1">Delete</button>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-<!-- Modal Create -->
-<div x-show="showCreateModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-    <div class="bg-white rounded-xl shadow-xl p-8 w-[28rem]">
-        <h2 class="text-2xl font-bold mb-4">Tambah Hewan Peliharaan</h2>
-        <form @submit.prevent="createHewan">
-            <input type="text" placeholder="Nama Hewan" x-model="newHewan.nama" class="border border-gray-200 rounded-lg w-full p-2 mb-4" required>
-            <input type="date" x-model="newHewan.tanggal_lahir" class="border border-gray-200 rounded-lg w-full p-2 mb-4" required>
-            <input type="url" placeholder="URL Foto" x-model="newHewan.foto" class="border border-gray-200 rounded-lg w-full p-2 mb-4" required>
-            <button type="submit" class="bg-slate-900 text-white rounded-lg px-4 py-2">Simpan</button>
-            <button @click="showCreateModal = false" class="border border-gray-200 rounded-lg px-4 py-2">Batal</button>
-        </form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Hewan Peliharaan - Pet Clinic</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .navbar { background: #333; padding: 10px; margin-bottom: 20px; }
+        .navbar a { color: white; text-decoration: none; margin-right: 20px; }
+        .navbar a:hover { text-decoration: underline; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .btn { padding: 8px 16px; background: #007bff; color: white; border: none; cursor: pointer; text-decoration: none; display: inline-block; margin: 5px; }
+        .btn:hover { background: #0056b3; }
+        .btn-danger { background: #dc3545; }
+        .btn-danger:hover { background: #c82333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .modal { display: none; position: fixed; z-index: 1; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.4); }
+        .modal-content { background-color: #fefefe; margin: 15% auto; padding: 20px; border: 1px solid #888; width: 500px; }
+        .close { color: #aaa; float: right; font-size: 28px; font-weight: bold; cursor: pointer; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; border: 1px solid #ddd; }
+        .pet-card { border: 1px solid #ddd; padding: 15px; margin: 10px; display: inline-block; width: 300px; vertical-align: top; }
+        .pet-image { width: 100%; height: 200px; object-fit: cover; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <!-- Navbar untuk Klien -->
+    <div class="navbar">
+        <a href="/">Dashboard</a>
+        <a href="/kelola-hewan/">Kelola Hewan Peliharaan</a>
+        <a href="/daftar-kunjungan/">Daftar Kunjungan</a>
+        <a href="/daftar-vaksinasi/">Daftar Vaksinasi</a>
+        <a href="/logout/">Logout</a>
     </div>
-</div>
-{% endblock %}
+
+    <div class="container">
+        <h1>Kelola Hewan Peliharaan</h1>
+        <button class="btn" onclick="openCreateModal()">Tambah Hewan Baru</button>
+
+        <!-- View Toggle -->
+        <div style="margin: 20px 0;">
+            <button class="btn" onclick="toggleView('table')">Tampilan Tabel</button>
+            <button class="btn" onclick="toggleView('card')">Tampilan Kartu</button>
+        </div>
+
+        <!-- Table View -->
+        <div id="tableView">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nama Hewan</th>
+                        <th>Pemilik</th>
+                        <th>Jenis</th>
+                        <th>Tanggal Lahir</th>
+                        <th>Status Kunjungan</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Mimi</td>
+                        <td>John Doe</td>
+                        <td>Kucing Ragdoll</td>
+                        <td>2022-05-15</td>
+                        <td><span style="color: green;">Aktif</span></td>
+                        <td>
+                            <button class="btn" onclick="openUpdateModal('mimi')">Update</button>
+                            <button class="btn btn-danger" onclick="confirmDelete('mimi', 'John Doe')">Delete</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Buddy</td>
+                        <td>Jane Smith</td>
+                        <td>Anjing Golden Retriever</td>
+                        <td>2021-03-10</td>
+                        <td><span style="color: gray;">Tidak Aktif</span></td>
+                        <td>
+                            <button class="btn" onclick="openUpdateModal('buddy')">Update</button>
+                            <button class="btn btn-danger" onclick="confirmDelete('buddy', 'Jane Smith')">Delete</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Card View -->
+        <div id="cardView" style="display: none;">
+            <div class="pet-card">
+                <img src="https://via.placeholder.com/300x200?text=Kucing+Ragdoll" alt="Mimi" class="pet-image">
+                <h3>Mimi</h3>
+                <p><strong>Pemilik:</strong> John Doe</p>
+                <p><strong>Jenis:</strong> Kucing Ragdoll</p>
+                <p><strong>Tanggal Lahir:</strong> 15 Mei 2022</p>
+                <p><strong>Status:</strong> <span style="color: green;">Aktif</span></p>
+                <button class="btn" onclick="openUpdateModal('mimi')">Update</button>
+                <button class="btn btn-danger" onclick="confirmDelete('mimi', 'John Doe')">Delete</button>
+            </div>
+            
+            <div class="pet-card">
+                <img src="https://via.placeholder.com/300x200?text=Anjing+Golden" alt="Buddy" class="pet-image">
+                <h3>Buddy</h3>
+                <p><strong>Pemilik:</strong> Jane Smith</p>
+                <p><strong>Jenis:</strong> Anjing Golden Retriever</p>
+                <p><strong>Tanggal Lahir:</strong> 10 Maret 2021</p>
+                <p><strong>Status:</strong> <span style="color: gray;">Tidak Aktif</span></p>
+                <button class="btn" onclick="openUpdateModal('buddy')">Update</button>
+                <button class="btn btn-danger" onclick="confirmDelete('buddy', 'Jane Smith')">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Modal -->
+    <div id="createModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('createModal')">&times;</span>
+            <h2>Tambah Hewan Baru</h2>
+            <form>
+                <div class="form-group">
+                    <label>Nama Hewan:</label>
+                    <input type="text" name="nama" required>
+                </div>
+                <div class="form-group">
+                    <label>Jenis Hewan:</label>
+                    <select name="jenis" required>
+                        <option value="">Pilih Jenis</option>
+                        <option value="kucing-ragdoll">Kucing Ragdoll</option>
+                        <option value="anjing-golden">Anjing Golden Retriever</option>
+                        <option value="hamster">Hamster</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Lahir:</label>
+                    <input type="date" name="tanggal_lahir" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Foto:</label>
+                    <input type="url" name="url_foto" placeholder="https://example.com/foto.jpg">
+                </div>
+                <button type="submit" class="btn">Simpan</button>
+                <button type="button" class="btn btn-danger" onclick="closeModal('createModal')">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Update Modal -->
+    <div id="updateModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('updateModal')">&times;</span>
+            <h2>Update Hewan</h2>
+            <form>
+                <div class="form-group">
+                    <label>Nama Hewan:</label>
+                    <input type="text" name="nama" id="updateNama" required>
+                </div>
+                <div class="form-group">
+                    <label>Jenis Hewan:</label>
+                    <select name="jenis" id="updateJenis" required>
+                        <option value="">Pilih Jenis</option>
+                        <option value="kucing-ragdoll">Kucing Ragdoll</option>
+                        <option value="anjing-golden">Anjing Golden Retriever</option>
+                        <option value="hamster">Hamster</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Tanggal Lahir:</label>
+                    <input type="date" name="tanggal_lahir" id="updateTanggal" required>
+                </div>
+                <div class="form-group">
+                    <label>URL Foto:</label>
+                    <input type="url" name="url_foto" id="updateFoto" placeholder="https://example.com/foto.jpg">
+                </div>
+                <button type="submit" class="btn">Update</button>
+                <button type="button" class="btn btn-danger" onclick="closeModal('updateModal')">Batal</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function toggleView(view) {
+            const tableView = document.getElementById('tableView');
+            const cardView = document.getElementById('cardView');
+            
+            if (view === 'table') {
+                tableView.style.display = 'block';
+                cardView.style.display = 'none';
+            } else {
+                tableView.style.display = 'none';
+                cardView.style.display = 'block';
+            }
+        }
+
+        function openCreateModal() {
+            document.getElementById('createModal').style.display = 'block';
+        }
+
+        function openUpdateModal(petName) {
+            // Dummy data - nanti ganti dengan data real
+            if (petName === 'mimi') {
+                document.getElementById('updateNama').value = 'Mimi';
+                document.getElementById('updateJenis').value = 'kucing-ragdoll';
+                document.getElementById('updateTanggal').value = '2022-05-15';
+                document.getElementById('updateFoto').value = 'https://via.placeholder.com/300x200?text=Kucing+Ragdoll';
+            }
+            document.getElementById('updateModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function confirmDelete(petName, ownerName) {
+            if (confirm(`Apakah Anda yakin ingin menghapus hewan "${petName}" milik "${ownerName}"?`)) {
+                alert('Hewan berhasil dihapus!');
+                // Implementasi delete logic di sini
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const createModal = document.getElementById('createModal');
+            const updateModal = document.getElementById('updateModal');
+            if (event.target == createModal) {
+                createModal.style.display = 'none';
+            }
+            if (event.target == updateModal) {
+                updateModal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

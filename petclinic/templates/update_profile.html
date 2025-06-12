@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="min-h-screen bg-gray-100">
+  <!-- Navbar (copy from dashboard.html) -->
+  <nav class="bg-blue-600 text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4">
+      <div class="flex justify-between items-center py-4">
+        <div class="flex items-center space-x-8">
+          <h1 class="text-xl font-bold">Pet Clinic</h1>
+          <a href="/dashboard/" class="hover:text-blue-200 transition duration-200">← Kembali ke Dashboard</a>
+        </div>
+        <div class="flex items-center space-x-4">
+          <span class="text-sm">Welcome, {{ profile.name }}</span>
+          <a href="/logout/" class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded transition duration-200">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Update Profile Form -->
+  <div class="max-w-2xl mx-auto py-8 px-4">
+    <div class="bg-white shadow-lg rounded-lg overflow-hidden">
+      <div class="bg-blue-50 px-6 py-4 border-b">
+        <h2 class="text-2xl font-bold text-gray-800">Update Profile</h2>
+        <p class="text-gray-600 mt-1">Perbarui informasi profil Anda</p>
+      </div>
+
+      <form method="post" class="p-6">
+        {% csrf_token %}
+        
+        <!-- Messages -->
+        {% if messages %}
+          {% for message in messages %}
+            <div class="mb-4 p-4 rounded {% if message.tags == 'error' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+        <div class="space-y-4">
+          <!-- Basic Info -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Alamat *</label>
+            <textarea name="address" rows="3" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>{{ profile.address }}</textarea>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon *</label>
+            <input type="text" name="phone" value="{{ profile.phone }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+          </div>
+
+          <!-- Role-specific fields -->
+          {% if profile.user_type == 'individual' %}
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nama Depan *</label>
+              <input type="text" name="first_name" value="{{ profile.first_name }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nama Tengah</label>
+              <input type="text" name="middle_name" value="{{ profile.middle_name|default:'' }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nama Belakang *</label>
+              <input type="text" name="last_name" value="{{ profile.last_name }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+            </div>
+          
+          {% elif profile.user_type == 'company' %}
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Nama Perusahaan *</label>
+              <input type="text" name="company_name" value="{{ profile.company_name }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+            </div>
+          
+          {% elif profile.user_type in 'frontdesk,veterinarian,nurse' %}
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Akhir Kerja</label>
+              <input type="date" name="end_date" value="{{ profile.end_date|default:'' }}" class="w-full border border-gray-300 rounded px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="flex justify-end space-x-3 mt-8 pt-6 border-t">
+          <a href="/dashboard/" class="px-6 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition duration-200">Batal</a>
+          <button type="submit" class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition duration-200">Update Profile</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
