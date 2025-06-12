@@ -88,3 +88,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = '/authentication/login/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/authentication/login/'
+
+
+if 'railway' in os.environ.get('RAILWAY_ENVIRONMENT_NAME', ''):
+    MIGRATION_MODULES = {
+        'petclinic': None,
+    }
